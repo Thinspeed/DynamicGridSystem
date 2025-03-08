@@ -119,7 +119,7 @@ namespace EntityFramework.Preferences.Migrations
             modelBuilder.Entity("GridSystem.Domain.Grids.Column", b =>
                 {
                     b.HasOne("GridSystem.Domain.Grids.Grid", "Grid")
-                        .WithMany()
+                        .WithMany("Columns")
                         .HasForeignKey("GridId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
@@ -130,12 +130,19 @@ namespace EntityFramework.Preferences.Migrations
             modelBuilder.Entity("GridSystem.Domain.Grids.Row", b =>
                 {
                     b.HasOne("GridSystem.Domain.Grids.Grid", "Grid")
-                        .WithMany()
+                        .WithMany("Rows")
                         .HasForeignKey("GridId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
                     b.Navigation("Grid");
+                });
+
+            modelBuilder.Entity("GridSystem.Domain.Grids.Grid", b =>
+                {
+                    b.Navigation("Columns");
+
+                    b.Navigation("Rows");
                 });
 #pragma warning restore 612, 618
         }

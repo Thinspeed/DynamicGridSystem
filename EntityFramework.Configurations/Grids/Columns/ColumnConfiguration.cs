@@ -11,7 +11,7 @@ public class ColumnConfiguration : EntityConfiguration<Column>
     {
         base.Configure(builder);
         
-        builder.HasOne(x => x.Grid).WithMany().HasForeignKey(x => x.GridId);
+        builder.HasOne(x => x.Grid).WithMany(x => x.Columns).HasForeignKey(x => x.GridId);
         
         builder.Ignore(x => x.Type);
     }
