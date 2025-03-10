@@ -42,11 +42,11 @@ public partial class Grid : Entity, IAggregateRoot
         return column;
     }
 
-    public void UpdateSingleSelectColumn(string name, int position, List<string> values)
+    public void UpdateSingleSelectColumn(int columnId, string name, int position, List<string> values)
     {
-        SingleSelectColumn column = GetColumn<SingleSelectColumn>(position);
+        SingleSelectColumn column = GetColumn<SingleSelectColumn>(columnId);
 
-        column.Values = values;
+        column.Update(name, position, values);
     }
 
     private T GetColumn<T>(int columnId)

@@ -14,4 +14,11 @@ public partial class SingleSelectColumn: Column
     public List<string> Values { get; set; }
     
     public override ColumnType Type => ColumnType.SingleSelect;
+
+    public void Update(string name, int position, List<string> values)
+    {
+        Name = name;
+        Position = position;
+        Values = values;
+    }
 }
