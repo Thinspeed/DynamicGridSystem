@@ -15,7 +15,7 @@ public class GetNumericColumnByIdQuery : GetByIdQuery<int, GetNumericColumnByIdQ
 public partial class ColumnController
 {
     [HttpGet("numeric/{Id}")]
-    public async Task<IActionResult> GetById(GetNumericColumnByIdQuery request)
+    public async Task<IActionResult> GetNumericColumnById(GetNumericColumnByIdQuery request)
     {
         return Ok(await Mediator.Send(request));
     }
@@ -50,6 +50,8 @@ public class GetNumericColumnByIdQueryResponse
     
     public string Name { get; init; }
     
+    public int Position { get; init; }
+    
     public int DecimalPlaces { get; init; }
     
     
@@ -57,6 +59,7 @@ public class GetNumericColumnByIdQueryResponse
         EfSelector.Declare<NumericColumn, GetNumericColumnByIdQueryResponse>()
             .Select(src => src.Id, dst => dst.Id)
             .Select(src => src.Name, dst => dst.Name)
+            .Select(src => src.Position, dst => dst.Position)
             .Select(src => src.DecimalPlaces, dst => dst.DecimalPlaces)
             .Construct();
 }

@@ -54,6 +54,22 @@ public partial class Grid : Entity, IAggregateRoot
         column.Update(name, position, values);
     }
 
+    public StringColumn AddStringColumn(int columnId, string name, int position)
+    {
+        var column = new StringColumn(name, position, Id);
+        
+        Columns.Add(column);
+        
+        return column;
+    }
+
+    public void UpdateStringColumn(int columnId, string name, int position)
+    {
+        StringColumn column = GetColumn<StringColumn>(columnId);
+        
+        column.Update(name, position);
+    }
+    
     private T GetColumn<T>(int columnId)
         where T : Column
     {

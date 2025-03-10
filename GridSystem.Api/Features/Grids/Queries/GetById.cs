@@ -2,6 +2,7 @@ using EFSelector;
 using EntityFramework.Preferences;
 using GridSystem.Api.Requests;
 using GridSystem.Domain.Grids;
+using JetBrains.Annotations;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -41,6 +42,7 @@ public class GetGridByIdQueryHandler(ApplicationRoDbContext dbContext)
     }
 }
 
+[UsedImplicitly]
 public class GetGridByIdQueryResponse
 {
     public int Id { get; init; }
