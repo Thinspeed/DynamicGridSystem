@@ -6,20 +6,22 @@ using MediatR;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 
-namespace GridSystem.Api.Features.Columns;
+namespace GridSystem.Api.Features.Grids;
 
 [UsedImplicitly]
 public record CreateSingleSelectColumnCommandBody(
-    int GridId,
     string Name,
     int Position,
     List<string> Values) : PostCommandBody;
-    
-public class CreateSingleSelectColumnCommand : PostCommand<CreateSingleSelectColumnCommandBody, int>;
 
-public partial class ColumnController
+public class CreateSingleSelectColumnCommand : PostCommand<CreateSingleSelectColumnCommandBody, int>
 {
-    [HttpPost("single-select")]
+    [FromRoute] public int GridId { get; init; }
+}
+
+public partial class GridController
+{
+    [HttpPost("{GridId}/single-select")]
     public async Task<IActionResult> CreateSingleSelectColumn(CreateSingleSelectColumnCommand request)
     {
         return Ok(await Mediator.Send(request));
@@ -34,8 +36,8 @@ public class CreateSingleSelectColumnCommandHandler(ApplicationRwDbContext dbCon
     {
         CreateSingleSelectColumnCommandBody body = request.Body;
 
-        Grid grid = await dbContext.Set<Grid>().FirstOrDefaultAsync(x => x.Id == body.GridId, cancellationToken) ??
-                    throw new Exception($"Grid with id {body.GridId} does not exist");
+        Grid grid = await dbContext.Set<Grid>().FirstOrDefaultAsync(x => x.Id == request.GridId, cancellationToken) ??
+                    throw new Exception($"Grid with id {request.GridId} does not exist");
         
         SingleSelectColumn column = grid.AddSingleSelectColumn(body.Name, body.Position, body.Values);
         

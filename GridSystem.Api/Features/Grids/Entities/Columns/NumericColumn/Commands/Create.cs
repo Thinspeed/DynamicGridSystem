@@ -7,20 +7,22 @@ using MediatR;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 
-namespace GridSystem.Api.Features.Columns;
+namespace GridSystem.Api.Features.Grids;
 
 [UsedImplicitly]
 public record CreateNumericColumnCommandBody(
-    int GridId,
     string Name,
     int Position,
     int DecimalPlaces) : PostCommandBody;
-    
-public class CreateNumericColumnCommand : PostCommand<CreateNumericColumnCommandBody, int>;
 
-public partial class ColumnController
+public class CreateNumericColumnCommand : PostCommand<CreateNumericColumnCommandBody, int>
 {
-    [HttpPost("numeric")]
+    [FromRoute] public int GridId { get; init; }
+}
+
+public partial class GridController
+{
+    [HttpPost("{GridId}/numeric")]
     public async Task<IActionResult> CreateNumericColumn(CreateNumericColumnCommand request)
     {
         return Ok(await Mediator.Send(request));
@@ -34,11 +36,11 @@ public class CreateNumericColumnCommandHandler(ApplicationRwDbContext dbContext)
     {
         CreateNumericColumnCommandBody body = request.Body;
         
-        Grid? grid = await dbContext.Set<Grid>().FirstOrDefaultAsync(x => x.Id == body.GridId, cancellationToken);
+        Grid? grid = await dbContext.Set<Grid>().FirstOrDefaultAsync(x => x.Id == request.GridId, cancellationToken);
 
         if (grid == null)
         {
-            throw new ArgumentNullException($"Grid with {body.GridId} not found");
+            throw new ArgumentNullException($"Grid with {request.GridId} not found");
         }
         
         NumericColumn column =  grid.AddNumericColumn(body.Name, body.Position, body.DecimalPlaces);

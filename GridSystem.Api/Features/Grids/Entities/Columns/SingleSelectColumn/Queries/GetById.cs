@@ -8,11 +8,11 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using testSolution.Selector;
 
-namespace GridSystem.Api.Features.Columns;
+namespace GridSystem.Api.Features.Grids;
 
 public class GetSingleSelectColumnByIdQuery : GetByIdQuery<int, GetSingleSelectColumnByIdQueryResponse>;
 
-public partial class ColumnController
+public partial class GridController
 {
     [HttpGet("single-select/{Id}")]
     public async Task<IActionResult> GetSingleSelectColumnById(GetSingleSelectColumnByIdQuery request)

@@ -7,6 +7,7 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace GridSystem.Api.Features.Grids;
 
+[UsedImplicitly]
 public record CreateGridCommandBody(string Name) : PostCommandBody;
 
 public class CreateGridCommand : PostCommand<CreateGridCommandBody, int>;
@@ -16,20 +17,21 @@ public partial class GridController
     [HttpPost]
     public async Task<IActionResult> Create(CreateGridCommand request)
     {
-        return Ok(Mediator.Send(request));
+        return Ok(await Mediator.Send(request));
     }
 }
 
 [UsedImplicitly]
-public class CreateGridCommandHandler(ApplicationRwDbContext dbContext) : IRequestHandler<CreateGridCommand, int>
+public class CreateGridCommandHandler(ApplicationRwDbContext dbContext) : 
+    BaseRequestHandler<CreateGridCommand, int>(dbContext)
 {
-    public async Task<int> Handle(CreateGridCommand request, CancellationToken cancellationToken)
+    public override async Task<int> Handle(CreateGridCommand request, CancellationToken cancellationToken)
     {
         var grid = new Grid(request.Body.Name);
 
-        await dbContext.Set<Grid>().AddAsync(grid, cancellationToken);
+        await DbContext.Set<Grid>().AddAsync(grid, cancellationToken);
         
-        await dbContext.SaveChangesAsync(cancellationToken);
+        await DbContext.SaveChangesAsync(cancellationToken);
 
         return grid.Id;
     }

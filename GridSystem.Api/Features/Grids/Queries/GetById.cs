@@ -14,7 +14,7 @@ public class GetGridByIdQuery : GetByIdQuery<int, GetGridByIdQueryResponse>;
 
 public partial class GridController
 {
-    [HttpGet("/{Id}")]
+    [HttpGet("{Id}")]
     public async Task<IActionResult> GetById(GetGridByIdQuery request)
     {
         return Ok(await Mediator.Send(request));

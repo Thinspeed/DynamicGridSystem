@@ -8,11 +8,11 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using testSolution.Selector;
 
-namespace GridSystem.Api.Features.Columns;
+namespace GridSystem.Api.Features.Grids;
 
 public class GetNumericColumnByIdQuery : GetByIdQuery<int, GetNumericColumnByIdQueryResponse>;
 
-public partial class ColumnController
+public partial class GridController
 {
     [HttpGet("numeric/{Id}")]
     public async Task<IActionResult> GetNumericColumnById(GetNumericColumnByIdQuery request)

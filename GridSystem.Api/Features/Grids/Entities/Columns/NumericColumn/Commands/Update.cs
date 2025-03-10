@@ -6,21 +6,24 @@ using MediatR;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 
-namespace GridSystem.Api.Features.Columns;
+namespace GridSystem.Api.Features.Grids;
 
 [UsedImplicitly]
 public record UpdateNumericColumnCommandBody(
-    int GridId,
-    int ColumnId,
     string Name,
     int Position,
     int DecimalPlaces) : PutCommandBody;
-    
-public class UpdateNumericColumnCommand : PutCommand<UpdateNumericColumnCommandBody, Unit>;
 
-public partial class ColumnController
+public class UpdateNumericColumnCommand : PutCommand<UpdateNumericColumnCommandBody, Unit>
 {
-    [HttpPut("numeric")]
+    [FromRoute] public int GridId { get; init; }
+    
+    [FromRoute] public int ColumnId { get; init; }
+}
+
+public partial class GridController
+{
+    [HttpPut("{GridId}/numeric/{ColumnId}")]
     public async Task<IActionResult> UpdateNumericColumnAsync(UpdateNumericColumnCommand request)
     {
         return Ok(await Mediator.Send(request));
@@ -34,11 +37,13 @@ public class UpdateNumericColumnCommandHandler(ApplicationRwDbContext dbContext)
     public async Task<Unit> Handle(UpdateNumericColumnCommand request, CancellationToken cancellationToken)
     {
         UpdateNumericColumnCommandBody body = request.Body;
-        Grid grid = await dbContext.Set<Grid>().FirstOrDefaultAsync(grid => grid.Id == body.GridId, cancellationToken) ??
-                    throw new Exception("Grid not found");
+        Grid grid = await dbContext.Set<Grid>()
+                        .Include(x => x.Columns.Where(c => c.Id == request.ColumnId))
+                        .FirstOrDefaultAsync(x => x.Id == request.GridId, cancellationToken) 
+                    ?? throw new Exception($"Grid with id {request.GridId} not found");
         
-        grid.UpdateNumericColumn(body.ColumnId, body.Name, body.Position, body.DecimalPlaces);
-
+        grid.UpdateNumericColumn(request.ColumnId, body.Name, body.Position, body.DecimalPlaces);
+        
         await dbContext.SaveChangesAsync(cancellationToken);
         
         return Unit.Value;

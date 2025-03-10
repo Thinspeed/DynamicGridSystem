@@ -20,7 +20,7 @@
     </ItemGroup>
 
     <ItemGroup>
-      <Folder Include="Features\Rows\" />
+      <Folder Include="Features\Grids\Entities\Rows\" />
     </ItemGroup>
 
     <ItemGroup>
