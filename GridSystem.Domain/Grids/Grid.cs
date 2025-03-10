@@ -17,6 +17,11 @@ public partial class Grid : Entity, IAggregateRoot
     public ICollection<Column> Columns { get; } = new List<Column>();
     public ICollection<Row> Rows { get; } = new List<Row>();
 
+    public void Update(string name)
+    {
+        Name = name;
+    }
+    
     public NumericColumn AddNumericColumn(string name, int position, int decimalPlaces)
     {
         var column = new NumericColumn(name, position, Id, decimalPlaces);

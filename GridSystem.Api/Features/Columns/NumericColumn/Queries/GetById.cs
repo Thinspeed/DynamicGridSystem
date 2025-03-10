@@ -10,26 +10,26 @@ using testSolution.Selector;
 
 namespace GridSystem.Api.Features.Columns;
 
-public class GetByIdNumericColumnQuery : GetByIdQuery<int, GetByIdNumericColumnQueryResponse>;
+public class GetNumericColumnByIdQuery : GetByIdQuery<int, GetNumericColumnByIdQueryResponse>;
 
 public partial class ColumnController
 {
     [HttpGet("numeric/{Id}")]
-    public async Task<IActionResult> GetById(GetByIdNumericColumnQuery request)
+    public async Task<IActionResult> GetById(GetNumericColumnByIdQuery request)
     {
         return Ok(await Mediator.Send(request));
     }
 }
 
 [UsedImplicitly]
-public class GetByIdNumericColumnQueryHandler(ApplicationRoDbContext dbContext) : IRequestHandler<GetByIdNumericColumnQuery, GetByIdNumericColumnQueryResponse>
+public class GetNumericColumnByIdQueryHandler(ApplicationRoDbContext dbContext) : IRequestHandler<GetNumericColumnByIdQuery, GetNumericColumnByIdQueryResponse>
 {
-    private static Selector<NumericColumn, GetByIdNumericColumnQueryResponse> _selector =
-        GetByIdNumericColumnQueryResponse.Selector;
+    private static Selector<NumericColumn, GetNumericColumnByIdQueryResponse> _selector =
+        GetNumericColumnByIdQueryResponse.Selector;
     
-    public async Task<GetByIdNumericColumnQueryResponse> Handle(GetByIdNumericColumnQuery request, CancellationToken cancellationToken)
+    public async Task<GetNumericColumnByIdQueryResponse> Handle(GetNumericColumnByIdQuery request, CancellationToken cancellationToken)
     {
-        GetByIdNumericColumnQueryResponse? response = await dbContext.Set<NumericColumn>()
+        GetNumericColumnByIdQueryResponse? response = await dbContext.Set<NumericColumn>()
             .Where(x => x.Id == request.Id)
             .Select(_selector.Expression)
             .FirstOrDefaultAsync(cancellationToken);
@@ -44,7 +44,7 @@ public class GetByIdNumericColumnQueryHandler(ApplicationRoDbContext dbContext) 
 }
 
 [UsedImplicitly]
-public class GetByIdNumericColumnQueryResponse
+public class GetNumericColumnByIdQueryResponse
 {
     public int Id { get; init; }
     
@@ -53,8 +53,8 @@ public class GetByIdNumericColumnQueryResponse
     public int DecimalPlaces { get; init; }
     
     
-    public static Selector<NumericColumn, GetByIdNumericColumnQueryResponse> Selector =
-        EfSelector.Declare<NumericColumn, GetByIdNumericColumnQueryResponse>()
+    public static Selector<NumericColumn, GetNumericColumnByIdQueryResponse> Selector =
+        EfSelector.Declare<NumericColumn, GetNumericColumnByIdQueryResponse>()
             .Select(src => src.Id, dst => dst.Id)
             .Select(src => src.Name, dst => dst.Name)
             .Select(src => src.DecimalPlaces, dst => dst.DecimalPlaces)
