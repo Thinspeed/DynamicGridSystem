@@ -27,13 +27,20 @@ public abstract class PutCommand<TBody, TResponse> : IRequest<TResponse>
     public TBody Body { get; init; }
 }
 
-public abstract class PutCommandWithId<TBody, TResponse> : IRequest<TResponse>
+public abstract class PutCommandWithId<TId, TBody, TResponse> : IRequest<TResponse>
+    where TBody : PutCommandBody
 {
     [FromRoute]
-    public int Id { get; init; }
+    public TId Id { get; init; }
     
     [FromBody]
     public TBody Body { get; init; }
+}
+
+public abstract class DeleteCommand<TId, TResponse> : IRequest<TResponse>
+{
+    [FromRoute]
+    public TId Id { get; init; }
 }
 
 public abstract class GetByIdQuery<TId, TResponse> : IRequest<TResponse>

@@ -1,6 +1,7 @@
 using EntityFramework.Preferences;
 using GridSystem.Api.Requests;
 using GridSystem.Domain.Grids;
+using GridSystem.Domain.Grids.Columns;
 using JetBrains.Annotations;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
@@ -11,8 +12,7 @@ namespace GridSystem.Api.Features.Grids;
 [UsedImplicitly]
 public record CreateSingleSelectColumnCommandBody(
     string Name,
-    int Position,
-    List<string> Values) : PostCommandBody;
+    int Position) : PostCommandBody;
 
 public class CreateSingleSelectColumnCommand : PostCommand<CreateSingleSelectColumnCommandBody, int>
 {
@@ -30,18 +30,20 @@ public partial class GridController
 
 [UsedImplicitly]
 public class CreateSingleSelectColumnCommandHandler(ApplicationRwDbContext dbContext)
-    : IRequestHandler<CreateSingleSelectColumnCommand, int>
+    : BaseRequestHandler<CreateSingleSelectColumnCommand, int>(dbContext)
 {
-    public async Task<int> Handle(CreateSingleSelectColumnCommand request, CancellationToken cancellationToken)
+    //todo при такой логике даже не удаленные значения будут удалятся
+    //todo переделать!!!
+    public override async Task<int> Handle(CreateSingleSelectColumnCommand request, CancellationToken cancellationToken)
     {
         CreateSingleSelectColumnCommandBody body = request.Body;
-
-        Grid grid = await dbContext.Set<Grid>().FirstOrDefaultAsync(x => x.Id == request.GridId, cancellationToken) ??
+        
+        Grid grid = await DbContext.Set<Grid>().FirstOrDefaultAsync(x => x.Id == request.GridId, cancellationToken) ??
                     throw new Exception($"Grid with id {request.GridId} does not exist");
         
-        SingleSelectColumn column = grid.AddSingleSelectColumn(body.Name, body.Position, body.Values);
+        SingleSelectColumn column = grid.AddSingleSelectColumn(body.Name, body.Position);
         
-        await dbContext.SaveChangesAsync(cancellationToken);
+        await DbContext.SaveChangesAsync(cancellationToken);
         
         return column.Id;
     }

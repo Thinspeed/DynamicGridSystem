@@ -1,5 +1,5 @@
 using EntityFramework.Configurations.Abstractions;
-using GridSystem.Domain.Grids;
+using GridSystem.Domain.Grids.Columns;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
@@ -9,9 +9,5 @@ public class SingleSelectConfiguration : EntityConfiguration<SingleSelectColumn>
 {
     public override void Configure(EntityTypeBuilder<SingleSelectColumn> builder)
     {
-        //base.Configure(builder);
-
-        builder.Property(x => x.Values)
-            .HasColumnType("jsonb");
     }
 }

@@ -32,19 +32,19 @@ public partial class GridController
 
 [UsedImplicitly]
 public class UpdateNumericColumnCommandHandler(ApplicationRwDbContext dbContext)
-    : IRequestHandler<UpdateNumericColumnCommand, Unit>
+    : BaseRequestHandler<UpdateNumericColumnCommand, Unit>(dbContext)
 {
-    public async Task<Unit> Handle(UpdateNumericColumnCommand request, CancellationToken cancellationToken)
+    public override async Task<Unit> Handle(UpdateNumericColumnCommand request, CancellationToken cancellationToken)
     {
         UpdateNumericColumnCommandBody body = request.Body;
-        Grid grid = await dbContext.Set<Grid>()
+        Grid grid = await DbContext.Set<Grid>()
                         .Include(x => x.Columns.Where(c => c.Id == request.ColumnId))
                         .FirstOrDefaultAsync(x => x.Id == request.GridId, cancellationToken) 
                     ?? throw new Exception($"Grid with id {request.GridId} not found");
         
         grid.UpdateNumericColumn(request.ColumnId, body.Name, body.Position, body.DecimalPlaces);
         
-        await dbContext.SaveChangesAsync(cancellationToken);
+        await DbContext.SaveChangesAsync(cancellationToken);
         
         return Unit.Value;
     }

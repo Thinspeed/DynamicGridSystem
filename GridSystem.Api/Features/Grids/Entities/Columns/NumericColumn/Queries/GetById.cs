@@ -2,6 +2,7 @@ using EFSelector;
 using EntityFramework.Preferences;
 using GridSystem.Api.Requests;
 using GridSystem.Domain.Grids;
+using GridSystem.Domain.Grids.Columns;
 using JetBrains.Annotations;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
@@ -22,14 +23,15 @@ public partial class GridController
 }
 
 [UsedImplicitly]
-public class GetNumericColumnByIdQueryHandler(ApplicationRoDbContext dbContext) : IRequestHandler<GetNumericColumnByIdQuery, GetNumericColumnByIdQueryResponse>
+public class GetNumericColumnByIdQueryHandler(ApplicationRoDbContext dbContext) 
+    : BaseRequestHandler<GetNumericColumnByIdQuery, GetNumericColumnByIdQueryResponse>(dbContext)
 {
     private static Selector<NumericColumn, GetNumericColumnByIdQueryResponse> _selector =
         GetNumericColumnByIdQueryResponse.Selector;
     
-    public async Task<GetNumericColumnByIdQueryResponse> Handle(GetNumericColumnByIdQuery request, CancellationToken cancellationToken)
+    public override async Task<GetNumericColumnByIdQueryResponse> Handle(GetNumericColumnByIdQuery request, CancellationToken cancellationToken)
     {
-        GetNumericColumnByIdQueryResponse? response = await dbContext.Set<NumericColumn>()
+        GetNumericColumnByIdQueryResponse? response = await DbContext.Set<NumericColumn>()
             .Where(x => x.Id == request.Id)
             .Select(_selector.Expression)
             .FirstOrDefaultAsync(cancellationToken);

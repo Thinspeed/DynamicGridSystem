@@ -1,6 +1,8 @@
 using Generator.Attributes;
 using GridSystem.Domain.Abstractions;
 using GridSystem.Domain.Extensions;
+using GridSystem.Domain.Grids.Columns;
+using GridSystem.Domain.Grids.Rows;
 
 namespace GridSystem.Domain.Grids;
 
@@ -15,6 +17,7 @@ public partial class Grid : Entity, IAggregateRoot
     }
 
     public ICollection<Column> Columns { get; } = new List<Column>();
+    
     public ICollection<Row> Rows { get; } = new List<Row>();
 
     public void Update(string name)
@@ -38,20 +41,20 @@ public partial class Grid : Entity, IAggregateRoot
         column.Update(name, position, decimalPlaces);
     }
 
-    public SingleSelectColumn AddSingleSelectColumn(string name, int position, List<string> values)
+    public SingleSelectColumn AddSingleSelectColumn(string name, int position)
     {
-        var column = new SingleSelectColumn(name, position, Id, values);
+        var column = new SingleSelectColumn(name, position, Id);
         
         Columns.Add(column);
 
         return column;
     }
 
-    public void UpdateSingleSelectColumn(int columnId, string name, int position, List<string> values)
+    public void UpdateSingleSelectColumn(int columnId, string name, int position)
     {
         SingleSelectColumn column = GetColumn<SingleSelectColumn>(columnId);
 
-        column.Update(name, position, values);
+        column.Update(name, position);
     }
 
     public StringColumn AddStringColumn(int columnId, string name, int position)

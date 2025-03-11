@@ -22,13 +22,13 @@ public partial class GridController
 }
 
 public class GetGridByIdQueryHandler(ApplicationRoDbContext dbContext)
-    : IRequestHandler<GetGridByIdQuery, GetGridByIdQueryResponse>
+    : BaseRequestHandler<GetGridByIdQuery, GetGridByIdQueryResponse>(dbContext)
 {
     private static Selector<Grid, GetGridByIdQueryResponse> _selector = GetGridByIdQueryResponse.Selector;
     
-    public async Task<GetGridByIdQueryResponse> Handle(GetGridByIdQuery request, CancellationToken cancellationToken)
+    public override async Task<GetGridByIdQueryResponse> Handle(GetGridByIdQuery request, CancellationToken cancellationToken)
     {
-        GetGridByIdQueryResponse? response = await dbContext.Set<Grid>()
+        GetGridByIdQueryResponse? response = await DbContext.Set<Grid>()
             .Where(x => x.Id == request.Id)
             .Select(_selector.Expression)
             .FirstOrDefaultAsync(cancellationToken);

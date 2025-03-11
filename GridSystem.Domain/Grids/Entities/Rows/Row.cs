@@ -1,14 +1,12 @@
-using System.Text.Json;
-using System.Text.Json.Serialization;
 using Generator.Attributes;
 using GridSystem.Domain.Abstractions;
 
-namespace GridSystem.Domain.Grids;
+namespace GridSystem.Domain.Grids.Rows;
 
 [EfConstructor]
 public partial class Row : Entity
 {
-    [RelationId(RelationTypeName = nameof(Grid))]
+    [RelationId(RelationType = typeof(Grids.Grid))]
     private int _gridId;
     
     public Row(int columnId, Dictionary<string, string> data)

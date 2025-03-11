@@ -1,7 +1,7 @@
 using EFSelector;
 using EntityFramework.Preferences;
 using GridSystem.Api.Requests;
-using GridSystem.Domain.Grids;
+using GridSystem.Domain.Grids.Columns;
 using JetBrains.Annotations;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
@@ -23,16 +23,16 @@ public partial class GridController
 
 [UsedImplicitly]
 public class GetSingleSelectColumnByIdQueryHandler(ApplicationRoDbContext dbContext)
-    : IRequestHandler<GetSingleSelectColumnByIdQuery, GetSingleSelectColumnByIdQueryResponse>
+    : BaseRequestHandler<GetSingleSelectColumnByIdQuery, GetSingleSelectColumnByIdQueryResponse>(dbContext)
 {
-    private static Selector<SingleSelectColumn, GetSingleSelectColumnByIdQueryResponse> _selector =
+    private static readonly Selector<SingleSelectColumn, GetSingleSelectColumnByIdQueryResponse> Selector =
         GetSingleSelectColumnByIdQueryResponse.Selector;
     
-    public async Task<GetSingleSelectColumnByIdQueryResponse> Handle(GetSingleSelectColumnByIdQuery request, CancellationToken cancellationToken)
+    public override async Task<GetSingleSelectColumnByIdQueryResponse> Handle(GetSingleSelectColumnByIdQuery request, CancellationToken cancellationToken)
     {
-        GetSingleSelectColumnByIdQueryResponse? response = await dbContext.Set<SingleSelectColumn>()
+        GetSingleSelectColumnByIdQueryResponse? response = await DbContext.Set<SingleSelectColumn>()
             .Where(x => x.Id == request.Id)
-            .Select(_selector.Expression)
+            .Select(Selector.Expression)
             .FirstOrDefaultAsync(cancellationToken);
 
         if (response is null)
@@ -45,7 +45,7 @@ public class GetSingleSelectColumnByIdQueryHandler(ApplicationRoDbContext dbCont
 }
 
 [UsedImplicitly]
-public class GetSingleSelectColumnByIdQueryResponse
+public partial class GetSingleSelectColumnByIdQueryResponse
 {
     public int Id { get; init; }
     
@@ -53,13 +53,14 @@ public class GetSingleSelectColumnByIdQueryResponse
     
     public int Position { get; init; }
     
-    public List<string> Values { get; init; }
+    //public List<SingleSelectValueModel> Values { get; init; }
     
-    public static Selector<SingleSelectColumn, GetSingleSelectColumnByIdQueryResponse> Selector =
+    public static readonly Selector<SingleSelectColumn, GetSingleSelectColumnByIdQueryResponse> Selector =
         EfSelector.Declare<SingleSelectColumn, GetSingleSelectColumnByIdQueryResponse>()
             .Select(src => src.Id, dst => dst.Id)
             .Select(src => src.Name, dst => dst.Name)
             .Select(src => src.Position, dst => dst.Position)
-            .Select(src => src.Values, dst => dst.Values)
+            //todo сделать маппинг коллекции(нужно доработать EFSelector)
+            //.Select(src => src.Values.Select<SingleSelectValue, SingleSelectValueModel>(SingleSelectValueModel.Selector.Expression), dst => dst.Values)
             .Construct();
 }

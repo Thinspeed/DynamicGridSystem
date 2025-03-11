@@ -3,7 +3,7 @@
   "profiles": {
     "Generators": {
       "commandName": "DebugRoslynComponent",
-      "targetProject": "../TicketObserver.Domain/TicketObserver.Domain.csproj"
+      "targetProject": "../GridSystem.Domain/GridSystem.Domain.csproj"
     }
   }
 }

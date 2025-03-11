@@ -11,8 +11,7 @@ namespace GridSystem.Api.Features.Grids;
 [UsedImplicitly]
 public record UpdateSingleSelectColumnCommandBody(
     string Name,
-    int Position,
-    List<string> Values) : PutCommandBody;
+    int Position) : PutCommandBody;
 
 public class UpdateSingleSelectColumnCommand : PutCommand<UpdateSingleSelectColumnCommandBody, Unit>
 {
@@ -32,18 +31,18 @@ public partial class GridController
 
 [UsedImplicitly]
 public class UpdateSingleSelectColumnCommandHandler(ApplicationRwDbContext dbContext)
-    : IRequestHandler<UpdateSingleSelectColumnCommand, Unit>
+    : BaseRequestHandler<UpdateSingleSelectColumnCommand, Unit>(dbContext)
 {
-    public async Task<Unit> Handle(UpdateSingleSelectColumnCommand request, CancellationToken cancellationToken)
+    public override async Task<Unit> Handle(UpdateSingleSelectColumnCommand request, CancellationToken cancellationToken)
     {
         UpdateSingleSelectColumnCommandBody body = request.Body;
         
-        Grid grid = await dbContext.Set<Grid>().FirstOrDefaultAsync(x => x.Id == request.GridId, cancellationToken) ??
+        Grid grid = await DbContext.Set<Grid>().FirstOrDefaultAsync(x => x.Id == request.GridId, cancellationToken) ??
                     throw new Exception($"Grid with id {request.GridId} does not exist");
         
-        grid.UpdateSingleSelectColumn(request.ColumnId, body.Name, body.Position, body.Values);
+        grid.UpdateSingleSelectColumn(request.ColumnId, body.Name, body.Position);
         
-        await dbContext.SaveChangesAsync(cancellationToken);
+        await DbContext.SaveChangesAsync(cancellationToken);
         
         return Unit.Value; 
     }

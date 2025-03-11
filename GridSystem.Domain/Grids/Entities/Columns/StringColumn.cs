@@ -1,7 +1,7 @@
 using Generator.Attributes;
 using GridSystem.Domain.Grids.ValueObjects;
 
-namespace GridSystem.Domain.Grids;
+namespace GridSystem.Domain.Grids.Columns;
 
 [EfConstructor]
 public partial class StringColumn : Column

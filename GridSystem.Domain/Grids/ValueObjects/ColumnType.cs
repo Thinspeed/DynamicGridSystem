@@ -13,6 +13,8 @@ public enum ColumnTypeEnum
     MultiSelect = 7,
 }
 
+
+//todo нахрена он вообще нужеж и почему ValueObject, если я его игнорирую в efCore?
 public class ColumnType : ValueObject
 {
     public string Name { get; }

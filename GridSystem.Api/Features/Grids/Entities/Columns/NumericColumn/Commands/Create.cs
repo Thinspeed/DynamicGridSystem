@@ -2,6 +2,7 @@ using EntityFramework.Preferences;
 using GridSystem.Api.Requests;
 using GridSystem.Domain.Extensions;
 using GridSystem.Domain.Grids;
+using GridSystem.Domain.Grids.Columns;
 using JetBrains.Annotations;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
@@ -30,13 +31,14 @@ public partial class GridController
 }
 
 [UsedImplicitly]
-public class CreateNumericColumnCommandHandler(ApplicationRwDbContext dbContext) : IRequestHandler<CreateNumericColumnCommand, int>
+public class CreateNumericColumnCommandHandler(ApplicationRwDbContext dbContext) 
+    : BaseRequestHandler<CreateNumericColumnCommand, int>(dbContext)
 {
-    public async Task<int> Handle(CreateNumericColumnCommand request, CancellationToken cancellationToken)
+    public override async Task<int> Handle(CreateNumericColumnCommand request, CancellationToken cancellationToken)
     {
         CreateNumericColumnCommandBody body = request.Body;
         
-        Grid? grid = await dbContext.Set<Grid>().FirstOrDefaultAsync(x => x.Id == request.GridId, cancellationToken);
+        Grid? grid = await DbContext.Set<Grid>().FirstOrDefaultAsync(x => x.Id == request.GridId, cancellationToken);
 
         if (grid == null)
         {
@@ -45,7 +47,7 @@ public class CreateNumericColumnCommandHandler(ApplicationRwDbContext dbContext)
         
         NumericColumn column =  grid.AddNumericColumn(body.Name, body.Position, body.DecimalPlaces);
         
-        await dbContext.SaveChangesAsync(cancellationToken);
+        await DbContext.SaveChangesAsync(cancellationToken);
 
         return column.Id;
     }

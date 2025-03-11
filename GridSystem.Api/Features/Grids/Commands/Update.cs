@@ -11,7 +11,7 @@ namespace GridSystem.Api.Features.Grids;
 [UsedImplicitly]
 public record UpdateGridCommandBody(string Name) : PutCommandBody;
 
-public class UpdateGridCommand : PutCommandWithId<UpdateGridCommandBody, Unit>;
+public class UpdateGridCommand : PutCommandWithId<int, UpdateGridCommandBody, Unit>;
 
 public partial class GridController
 {
@@ -23,13 +23,14 @@ public partial class GridController
 }
 
 [UsedImplicitly]
-public class UpdateGridCommandHandler(ApplicationRwDbContext dbContext) : IRequestHandler<UpdateGridCommand, Unit>
+public class UpdateGridCommandHandler(ApplicationRwDbContext dbContext) 
+    : BaseRequestHandler<UpdateGridCommand, Unit>(dbContext)
 {
-    public async Task<Unit> Handle(UpdateGridCommand request, CancellationToken cancellationToken)
+    public override async Task<Unit> Handle(UpdateGridCommand request, CancellationToken cancellationToken)
     {
         UpdateGridCommandBody body = request.Body;
         
-        Grid? entity = await dbContext.Set<Grid>().FirstOrDefaultAsync(x => x.Id == request.Id, cancellationToken);
+        Grid? entity = await DbContext.Set<Grid>().FirstOrDefaultAsync(x => x.Id == request.Id, cancellationToken);
         if (entity == null)
         {
             throw new Exception($"Grid with id {request.Id} does not exist");
@@ -37,7 +38,7 @@ public class UpdateGridCommandHandler(ApplicationRwDbContext dbContext) : IReque
         
         entity.Update(body.Name);
         
-        await dbContext.SaveChangesAsync(cancellationToken);
+        await DbContext.SaveChangesAsync(cancellationToken);
         
         return Unit.Value;
     }

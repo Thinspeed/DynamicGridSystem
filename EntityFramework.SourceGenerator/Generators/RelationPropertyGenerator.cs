@@ -16,7 +16,7 @@ public class RelationPropertyGenerator : IIncrementalGenerator
 
     private const string AttributeName = "RelationId";
     private const string AttributeFullName = $"{AttributeName}Attribute";
-    private const string PropertyName = "RelationTypeName";
+    private const string PropertyName = "RelationType";
     private const string PkPropertyName = "PrimaryKeyName";
     
     private const string AttributeContent = $$"""
@@ -27,12 +27,16 @@ public class RelationPropertyGenerator : IIncrementalGenerator
                                                         [System.AttributeUsage(System.AttributeTargets.Field)]
                                                         public sealed class {{AttributeFullName}} : System.Attribute
                                                         {
-                                                            public required string {{PropertyName}} { get; init; }
+                                                            public required System.Type {{PropertyName}} { get; init; }
                                                             
                                                             public string? {{PkPropertyName}} { get; init; }
                                                         }
                                                     }
                                                     """;
+    
+    private static SymbolDisplayFormat _format = new SymbolDisplayFormat(
+        globalNamespaceStyle: SymbolDisplayGlobalNamespaceStyle.Included,
+        typeQualificationStyle: SymbolDisplayTypeQualificationStyle.NameAndContainingTypesAndNamespaces);
     
     public void Initialize(IncrementalGeneratorInitializationContext context)
     {
@@ -86,10 +90,13 @@ public class RelationPropertyGenerator : IIncrementalGenerator
                 
                 if (attribute is null) continue;
 
-                string propertyTypeName = attribute
+                ITypeSymbol propertyTypeSymbol = (attribute
                     .NamedArguments.
                     FirstOrDefault(x => x.Key == PropertyName)
-                    .Value.Value!.ToString();
+                    .Value.Value! as ITypeSymbol)!;
+                
+                string propertyTypeName = propertyTypeSymbol.Name;
+                string propertyTypeFullName = propertyTypeSymbol.ToDisplayString(_format);
                 
                 string? pkName = attribute
                     .NamedArguments.
@@ -98,19 +105,8 @@ public class RelationPropertyGenerator : IIncrementalGenerator
 
                 string fieldName = fieldSymbol.Name;
                 string idPropertyName = propertyTypeName + pkName;
-                string propertyName = propertyTypeName;
-                // if (fieldName.Length > 2 && fieldName.Substring(fieldName.Length - 2) == "Id")
-                // {
-                //     idPropertyName = fieldName.ConvertToPascalCase();
-                //     propertyName = idPropertyName.Substring(0, idPropertyName.Length - 2);
-                // }
-                // else
-                // {
-                //     propertyName = fieldName.ConvertToPascalCase();
-                //     idPropertyName = propertyName + "Id"; 
-                // }
                 
-                string idTypeName = fieldSymbol.Type.Name;
+                string idTypeName = fieldSymbol.Type.ToDisplayString(_format);
 
                 builder.Append($$"""
                                  
@@ -120,7 +116,7 @@ public class RelationPropertyGenerator : IIncrementalGenerator
                                              set => {{fieldName}} = value;
                                          }
                                          
-                                         public virtual {{propertyTypeName}} {{propertyName}} { get; set; }
+                                         public virtual {{propertyTypeFullName}} {{propertyTypeName}} { get; set; }
                                  """);
             }
 
