@@ -1,5 +1,6 @@
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
+using Sieve.Models;
 
 namespace GridSystem.Api.Requests;
 
@@ -47,4 +48,10 @@ public abstract class GetByIdQuery<TId, TResponse> : IRequest<TResponse>
 {
     [FromRoute]
     public TId Id { get; init; }
+}
+
+public abstract class GetQuery<TResponse> : IRequest<PagedList<TResponse>>
+{
+    [FromQuery]
+    public SieveModel SieveModel { get; init; }
 }

@@ -27,6 +27,7 @@
       <ProjectReference Include="..\AppDefinition\AppDefinition.csproj" />
       <ProjectReference Include="..\EFSelector\EFSelector.csproj" />
       <ProjectReference Include="..\EntityFramework.Preferences\EntityFramework.Preferences.csproj" />
+      <ProjectReference Include="..\Sieve\Sieve.csproj" />
     </ItemGroup>
 
 </Project>
