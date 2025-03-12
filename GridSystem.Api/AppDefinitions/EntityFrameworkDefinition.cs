@@ -1,5 +1,6 @@
 using AppDefinition.Abstractions;
 using EntityFramework.Preferences;
+using EntityFramework.Preferences.Interceptors;
 using JetBrains.Annotations;
 using Microsoft.EntityFrameworkCore;
 
@@ -20,7 +21,8 @@ public class EntityFrameworkDefinition : IAppDefinition
                                            ?? throw new InvalidOperationException("Migration connection string was not provided");
         
         builder.Services.AddDbContext<ApplicationRwDbContext>(options => options
-            .UseNpgsql(rwConnectionString));
+            .UseNpgsql(rwConnectionString)
+            .AddInterceptors(new SoftDeleteInterceptor()));
 
         builder.Services.AddDbContext<ApplicationRoDbContext>(options => options
             .UseNpgsql(roConnectionString)

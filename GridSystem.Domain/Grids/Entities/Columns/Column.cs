@@ -5,7 +5,7 @@ using GridSystem.Domain.Grids.ValueObjects;
 namespace GridSystem.Domain.Grids.Columns;
 
 //вынужден не делать его абстактнм, потому что иначе ef core не возможно сконфигурировать(кажется)
-public partial class Column : Entity
+public partial class Column : SoftDeletableEntity
 {
     protected Column() {}
     

@@ -4,7 +4,7 @@ using GridSystem.Domain.Abstractions;
 namespace GridSystem.Domain.Grids.Columns;
 
 [EfConstructor]
-public partial class SingleSelectValue : Entity
+public partial class SingleSelectValue : SoftDeletableEntity
 {
     [RelationId(RelationType = typeof(Columns.SingleSelectColumn))]
     private int _singleSelectColumnId;

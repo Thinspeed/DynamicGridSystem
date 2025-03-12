@@ -4,7 +4,7 @@ using GridSystem.Domain.Abstractions;
 namespace GridSystem.Domain.Grids.Rows;
 
 [EfConstructor]
-public partial class Row : Entity
+public partial class Row : SoftDeletableEntity
 {
     [RelationId(RelationType = typeof(Grids.Grid))]
     private int _gridId;

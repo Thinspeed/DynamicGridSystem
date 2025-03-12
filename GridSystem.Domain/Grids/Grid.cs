@@ -7,7 +7,7 @@ using GridSystem.Domain.Grids.Rows;
 namespace GridSystem.Domain.Grids;
 
 [EfConstructor]
-public partial class Grid : Entity, IAggregateRoot
+public partial class Grid : SoftDeletableEntity, IAggregateRoot
 {
     public string Name { get; set; }
 
