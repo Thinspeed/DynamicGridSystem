@@ -1,3 +1,4 @@
+using System.Text.Json;
 using Generator.Attributes;
 using GridSystem.Domain.Abstractions;
 
@@ -9,11 +10,11 @@ public partial class Row : SoftDeletableEntity
     [RelationId(RelationType = typeof(Grids.Grid))]
     private int _gridId;
     
-    public Row(int columnId, Dictionary<string, string> data)
+    public Row(int columnId, JsonDocument data)
     {
         GridId = columnId;
         Data = data;
     }
     
-    public Dictionary<string, string> Data { get; set; }
+    public JsonDocument Data { get; set; }
 }

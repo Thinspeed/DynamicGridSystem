@@ -1,8 +1,8 @@
+using System.Linq.Expressions;
 using GridSystem.Api.SievePreferences;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
 using Sieve.Models;
-using Sieve.Services;
 
 namespace GridSystem.Api.Requests;
 
@@ -35,13 +35,18 @@ public abstract class BaseRequestHandler<TRequest, TBaseType, TResponse> : IRequ
     
     public abstract Task<TResponse> Handle(TRequest request, CancellationToken cancellationToken);
 
-    protected async Task<PagedList<TBaseType>> CreatePagedListAsync(IQueryable<TBaseType> query, SieveModel sieveModel, CancellationToken cancellationToken)
+    protected async Task<PagedList<TBaseType>> CreatePagedListAsync<T>(
+        IQueryable<T> query, 
+        SieveModel sieveModel,
+        Expression<Func<T, TBaseType>> selector,
+        CancellationToken cancellationToken)
     {
         ValidateAndSetSieveModel(sieveModel);
         
         int totalCount = await query.CountAsync(cancellationToken);
         
-        IQueryable<TBaseType> sieveQuery = _sieveProcessor!.Apply(sieveModel, query);
+        IQueryable<T> sieveQuery = _sieveProcessor!.Apply(sieveModel, query);
+        IQueryable<TBaseType> resultQuery = sieveQuery.Select(selector);
 
         return new PagedList<TBaseType>()
         {
@@ -49,7 +54,7 @@ public abstract class BaseRequestHandler<TRequest, TBaseType, TResponse> : IRequ
             Page = sieveModel.Page!.Value,
             PageSize = sieveModel.PageSize!.Value,
             TotalPages = (int)Math.Ceiling((double)totalCount / sieveModel.PageSize!.Value),
-            Data = await sieveQuery.ToListAsync(cancellationToken)
+            Data = await resultQuery.ToListAsync(cancellationToken)
         };
     }
 

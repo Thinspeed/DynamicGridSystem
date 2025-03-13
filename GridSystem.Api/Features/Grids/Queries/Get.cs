@@ -27,8 +27,12 @@ public class GetGridQueryHandler(ApplicationRoDbContext dbContext, AppSieveProce
     
     public override async Task<PagedList<GetGridByIdQueryResponse>> Handle(GetGridQuery request, CancellationToken cancellationToken)
     {
-        IQueryable<GetGridByIdQueryResponse> query = DbContext.Set<Grid>().Select(Selector.Expression);
-
-        return await CreatePagedListAsync(query, request.SieveModel, cancellationToken);
+        IQueryable<Grid> query = DbContext.Set<Grid>();
+        
+        return await CreatePagedListAsync(
+            query, 
+            request.SieveModel,
+            Selector.Expression,
+            cancellationToken);
     }
 }
