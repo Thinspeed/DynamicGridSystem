@@ -7,11 +7,16 @@ namespace GridSystem.Api.SievePreferences;
 
 public class AppSieveProcessor : SieveProcessor
 {
-    public AppSieveProcessor(IOptions<SieveOptions> options) 
+    private ISieveJsonAccessor _sieveJsonAccessor;
+
+    public AppSieveProcessor(IOptions<SieveOptions> options, ISieveJsonAccessor sieveJsonAccessor) 
         : base(options)
     {
         DefaultPageSize = options.Value.DefaultPageSize;
+        _sieveJsonAccessor = sieveJsonAccessor;
     }
+    
+    protected override ISieveJsonAccessor SieveJsonAccessor => _sieveJsonAccessor;
     
     public int DefaultPageSize { get; }
 
@@ -19,9 +24,10 @@ public class AppSieveProcessor : SieveProcessor
 
     protected override SievePropertyMapper MapProperties(SievePropertyMapper mapper)
     {
-        return mapper
-            .ApplyConfiguration<GridSieveConfiguration>();
+        // return mapper
+        //     .ApplyConfiguration<GridSieveConfiguration>()
+        //     .ApplyConfiguration<RowSieveConfiguration>();
         
-        //return mapper.ApplyConfigurationsFromAssembly(typeof(AppSieveProcessor).Assembly);            
+        return mapper.ApplyConfigurationsFromAssembly(typeof(AppSieveProcessor).Assembly);            
     }
 }

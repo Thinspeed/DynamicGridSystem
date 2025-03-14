@@ -106,6 +106,8 @@ namespace Sieve.Services
         }
 
         protected IOptions<SieveOptions> Options { get; }
+        
+        protected virtual ISieveJsonAccessor SieveJsonAccessor { get; }
 
         /// <summary>
         /// Apply filtering, sorting, and pagination parameters found in `model` to `source`
@@ -368,7 +370,7 @@ namespace Sieve.Services
 
                 if (property != null)
                 {
-                    result = result.OrderByDynamic(fullName, property, sortTerm.Descending, useThenBy, Options.Value.DisableNullableTypeExpressionForSorting);
+                    result = result.OrderByDynamic(fullName, property, sortTerm.NestedJsonProperties, sortTerm.Descending, useThenBy, SieveJsonAccessor, Options.Value.DisableNullableTypeExpressionForSorting);
                 }
                 else
                 {

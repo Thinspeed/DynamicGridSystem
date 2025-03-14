@@ -12,7 +12,8 @@ public class SieveDefinition : IAppDefinition
     public void RegisterDefinition(IHostApplicationBuilder builder)
     {
         builder.Services.Configure<SieveOptions>(builder.Configuration.GetSection("Sieve"));
-        
+
+        builder.Services.AddSingleton<ISieveJsonAccessor, SieveJsonAccessor>();
         builder.Services.AddScoped<AppSieveProcessor>();
     }
 }

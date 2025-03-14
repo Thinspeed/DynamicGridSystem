@@ -2,6 +2,7 @@
 using System.Linq;
 using System.Linq.Expressions;
 using System.Reflection;
+using Sieve.Services;
 
 namespace Sieve.Extensions
 {
@@ -15,7 +16,7 @@ namespace Sieve.Extensions
             bool useThenBy, 
             bool disableNullableTypeExpression = false)
         {
-            var lambda = GenerateLambdaWithSafeMemberAccess<TEntity>(fullPropertyName, propertyInfo, disableNullableTypeExpression);
+            var lambda = GenerateLambdaWithSafeMemberAccess<TEntity>(fullPropertyName, Array.Empty<string>(), propertyInfo, null, disableNullableTypeExpression);
 
             var command = desc
                 ? (useThenBy ? "ThenByDescending" : "OrderByDescending")
@@ -31,10 +32,38 @@ namespace Sieve.Extensions
             return source.Provider.CreateQuery<TEntity>(resultExpression);
         }
 
+        public static IQueryable<TEntity> OrderByDynamic<TEntity>(
+            this IQueryable<TEntity> source,
+            string fullPropertyName,
+            PropertyInfo propertyInfo,
+            string[] nestedJsonProperties,
+            bool desc,
+            bool useThenBy, 
+            ISieveJsonAccessor jsonAccessor,
+            bool disableNullableTypeExpression = false)
+        {
+            var lambda = GenerateLambdaWithSafeMemberAccess<TEntity>(fullPropertyName, nestedJsonProperties, propertyInfo, jsonAccessor, disableNullableTypeExpression);
+
+            var command = desc
+                ? (useThenBy ? "ThenByDescending" : "OrderByDescending")
+                : (useThenBy ? "ThenBy" : "OrderBy");
+
+            var resultExpression = Expression.Call(
+                typeof(Queryable),
+                command,
+                new Type[] { typeof(TEntity), lambda.ReturnType },
+                source.Expression,
+                Expression.Quote(lambda));
+
+            return source.Provider.CreateQuery<TEntity>(resultExpression);
+        }
+        
         private static Expression<Func<TEntity, object>> GenerateLambdaWithSafeMemberAccess<TEntity>
         (
             string fullPropertyName,
+            string[] nestedJsonProperties,
             PropertyInfo propertyInfo,
+            ISieveJsonAccessor jsonAccessor,
             bool disableNullableTypeExpression
         )
         {
@@ -63,6 +92,11 @@ namespace Sieve.Extensions
             var expression = nullCheck == null
                 ? propertyValue
                 : Expression.Condition(nullCheck, Expression.Default(propertyValue.Type), propertyValue);
+
+            if (nestedJsonProperties.Length != 0 && jsonAccessor != null)
+            {
+                expression = jsonAccessor.GetJsonPropertyExpression(expression, nestedJsonProperties, propertyInfo);
+            }
 
             var converted = Expression.Convert(expression, typeof(object));
             return Expression.Lambda<Func<TEntity, object>>(converted, parameter);
