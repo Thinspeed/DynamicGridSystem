@@ -17,4 +17,6 @@ public partial class Row : SoftDeletableEntity
     }
     
     public JsonDocument Data { get; set; }
+    
+    public string DataAsString => Data.RootElement.ToString();
 }

@@ -57,7 +57,7 @@ public partial class Grid : SoftDeletableEntity, IAggregateRoot
         column.Update(name, position);
     }
 
-    public StringColumn AddStringColumn(int columnId, string name, int position)
+    public StringColumn AddStringColumn(string name, int position)
     {
         var column = new StringColumn(name, position, Id);
         
