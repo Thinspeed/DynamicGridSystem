@@ -49,7 +49,7 @@ public class GetGridByIdQueryResponse
     
     public required string Name { get; init; }
     
-    public static Selector<Grid, GetGridByIdQueryResponse> Selector = EfSelector.Declare<Grid, GetGridByIdQueryResponse>()
+    public static readonly Selector<Grid, GetGridByIdQueryResponse> Selector = EfSelector.Declare<Grid, GetGridByIdQueryResponse>()
             .Select(src => src.Id, dst => dst.Id)
             .Select(src => src.Name, dst => dst.Name)
             .Construct();
