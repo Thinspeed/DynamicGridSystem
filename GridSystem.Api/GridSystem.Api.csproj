@@ -26,4 +26,8 @@
       <ProjectReference Include="..\Sieve\Sieve.csproj" />
     </ItemGroup>
 
+    <ItemGroup>
+      <Folder Include="Features\Grids\Entities\Columns\StringColumn\Queries\" />
+    </ItemGroup>
+
 </Project>
