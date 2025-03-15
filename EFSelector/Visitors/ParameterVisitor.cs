@@ -1,6 +1,6 @@
 using System.Linq.Expressions;
 
-namespace testSolution.Selector.Visitors;
+namespace EFSelector.Visitors;
 
 internal class ParameterVisitor : ExpressionVisitor
 {

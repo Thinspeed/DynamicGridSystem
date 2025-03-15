@@ -5,7 +5,6 @@ using GridSystem.Domain.Grids.Rows;
 using JetBrains.Annotations;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
-using testSolution.Selector;
 
 namespace GridSystem.Api.Features.Grids;
 

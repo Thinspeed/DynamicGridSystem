@@ -1,6 +1,5 @@
 using System.Linq.Expressions;
-using testSolution.Selector;
-using testSolution.Selector.Visitors;
+using EFSelector.Visitors;
 
 namespace EFSelector;
 

@@ -6,7 +6,6 @@ using JetBrains.Annotations;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
-using testSolution.Selector;
 
 namespace GridSystem.Api.Features.Grids;
 

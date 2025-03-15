@@ -1,7 +1,7 @@
 using System;
 using System.Linq.Expressions;
 
-namespace testSolution.Selector;
+namespace EFSelector;
 
 public class Selector<TSource, TDestination>
 {
