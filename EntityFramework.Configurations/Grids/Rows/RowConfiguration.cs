@@ -14,5 +14,7 @@ public class RowConfiguration : EntityConfiguration<Row>
         builder.HasOne(x => x.Grid).WithMany(x => x.Rows).HasForeignKey(x => x.GridId);
 
         builder.Property(x => x.Data).HasColumnType("jsonb");
+        
+        builder.Ignore(x => x.DataAsString);
     }
 }

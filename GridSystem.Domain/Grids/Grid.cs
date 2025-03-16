@@ -1,3 +1,5 @@
+using System.Text.Json;
+using System.Text.Json.Nodes;
 using Generator.Attributes;
 using GridSystem.Domain.Abstractions;
 using GridSystem.Domain.Extensions;
@@ -9,13 +11,16 @@ namespace GridSystem.Domain.Grids;
 [EfConstructor]
 public partial class Grid : SoftDeletableEntity, IAggregateRoot
 {
-    public string Name { get; set; }
-
+    private const string IdPropertyName = "Id";
     public Grid(string name)
     {
         Name = name;
     }
-
+    
+    private string GetDefaultRowData => $"{{ \"{IdPropertyName}\":\"{Guid.NewGuid()}\" }}";
+    
+    public string Name { get; set; }
+    
     public ICollection<Column> Columns { get; } = new List<Column>();
     
     public ICollection<Row> Rows { get; } = new List<Row>();
@@ -71,6 +76,16 @@ public partial class Grid : SoftDeletableEntity, IAggregateRoot
         StringColumn column = GetColumn<StringColumn>(columnId);
         
         column.Update(name, position);
+    }
+
+    public Row AddRow()
+    {
+        //string data = GetDefaultRowData;
+        Row row = new Row(Id);
+        
+        Rows.Add(row);
+
+        return row;
     }
     
     private T GetColumn<T>(int columnId)
