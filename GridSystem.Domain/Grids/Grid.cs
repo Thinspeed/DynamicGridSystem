@@ -87,6 +87,25 @@ public partial class Grid : SoftDeletableEntity, IAggregateRoot
 
         return row;
     }
+
+    public void UpdateRow(int rowId, int columnId, string value)
+    {
+        Column column = Columns.FirstOrThrow(
+            c => c.Id == columnId, 
+            () => new ArgumentException($"Column with id {columnId} was not found"));
+
+        if (!column.ValidateValue(value))
+        {
+            throw new Exception($"Value is not valid");
+        }
+        
+        Row row = Rows.FirstOrThrow(
+            x => x.Id == rowId,
+            () => new ArgumentException($"Row with id {columnId} was not found"));
+        
+        row.AddOrUpdate(columnId.ToString(), value);
+        
+    }
     
     private T GetColumn<T>(int columnId)
         where T : Column

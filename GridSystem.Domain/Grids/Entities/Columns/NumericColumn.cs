@@ -22,6 +22,11 @@ public partial class NumericColumn : Column
 
     public override ColumnType Type => ColumnType.Numeric;
 
+    public override bool ValidateValue(string value)
+    {
+        return decimal.TryParse(value, out _);
+    }
+
     public void Update(string name, int position, int decimalPlaces = 0)
     {
         Name = name;

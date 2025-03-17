@@ -12,6 +12,11 @@ public partial class StringColumn : Column
 
     public override ColumnType Type => ColumnType.String;
 
+    public override bool ValidateValue(string value)
+    {
+        return true;
+    }
+
     public void Update(string name, int position)
     {
         Name = name;

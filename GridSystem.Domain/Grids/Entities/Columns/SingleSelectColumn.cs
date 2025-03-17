@@ -1,3 +1,4 @@
+using System.Text.Json;
 using Generator.Attributes;
 using GridSystem.Domain.Grids.ValueObjects;
 
@@ -13,6 +14,13 @@ public partial class SingleSelectColumn: Column
     public ICollection<SingleSelectValue> Values { get; } = new List<SingleSelectValue>();
     
     public override ColumnType Type => ColumnType.SingleSelect;
+
+    public override bool ValidateValue(string value)
+    {
+        SingleSelectValue? singleSelectValue = JsonSerializer.Deserialize<SingleSelectValue>(value);
+        return singleSelectValue is not null && 
+               Values.Any(x => x.Id == singleSelectValue.Id && x.Value == singleSelectValue.Value);
+    }
 
     public void Update(string name, int position)
     {
