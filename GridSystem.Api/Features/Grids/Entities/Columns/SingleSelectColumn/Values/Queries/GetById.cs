@@ -13,7 +13,7 @@ public class GetSingleSelectValueByIdQuery : GetByIdQuery<int, GetSingleSelectVa
 public partial class GridController
 {
     [HttpGet("single-select/value/{Id}")]
-    public async Task<IActionResult> GetSingleSelectValueById(GetSingleSelectValueByIdQueryResponse request)
+    public async Task<IActionResult> GetSingleSelectValueById(GetSingleSelectValueByIdQuery request)
     {
         return Ok(await Mediator.Send(request));
     }

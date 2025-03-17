@@ -26,6 +26,7 @@ public partial class GridController
 public class UpdateSingleSelectValueCommandHandler(ApplicationRwDbContext dbContext)
     : BaseRequestHandler<UpdateSingleSelectValueCommand, Unit>(dbContext)
 {
+    //todo обновлять нужно через grid, чтобы сразу обновить все ряды в которых использовалось значение из single select
     public override async Task<Unit> Handle(UpdateSingleSelectValueCommand request, CancellationToken cancellationToken)
     {
         UpdateSingleSelectValueCommandBody body = request.Body;
