@@ -12,8 +12,9 @@ public partial class StringColumn : Column
 
     public override ColumnType Type => ColumnType.String;
 
-    public override bool ValidateValue(string value)
+    public override bool TryCreateColumnRecord(string value, out ColumnRecord? record)
     {
+        record = new StringColumnRecord(value);
         return true;
     }
 

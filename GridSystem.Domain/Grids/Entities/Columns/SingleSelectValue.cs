@@ -1,5 +1,6 @@
 using Generator.Attributes;
 using GridSystem.Domain.Abstractions;
+using GridSystem.Domain.Grids.ValueObjects;
 
 namespace GridSystem.Domain.Grids.Columns;
 
@@ -22,13 +23,13 @@ public partial class SingleSelectValue : SoftDeletableEntity
     
     public string Value { get; set; }
 
-    public string ToRowValue()
+    public SingleSelectColumnRecord ToSingleSelectColumnRecord()
     {
-        return SingleSelectValue.CreateRowValue(Id, Value);
+        return SingleSelectValue.CreateSingleSelectColumnRecord(Id, Value);
     }
 
-    public static string CreateRowValue(int id, string value)
+    public static SingleSelectColumnRecord CreateSingleSelectColumnRecord(int id, string value)
     {
-        return $"{{\"{nameof(SingleSelectValue.Id)}\":{id},\"{nameof(SingleSelectValue.Value)}\":\"{value}\"}}";
+        return new SingleSelectColumnRecord(id, value);
     }
 }

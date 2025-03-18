@@ -2,9 +2,9 @@ namespace GridSystem.Domain.Abstractions;
 
 public abstract class ValueObject
 {
-    public override bool Equals(object obj)
+    public override bool Equals(object? obj)
     {
-        if (this.GetType() != obj.GetType())
+        if (this.GetType() != obj?.GetType())
         {
             return false;
         }

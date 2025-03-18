@@ -25,8 +25,9 @@ public partial class Column : SoftDeletableEntity
 
     public virtual ColumnType Type { get; } = null!;
 
-    public virtual bool ValidateValue(string value)
+    public virtual bool TryCreateColumnRecord(string value, out ColumnRecord? record)
     {
+        record = null;
         return false;
     }
 }

@@ -5,6 +5,7 @@ using GridSystem.Domain.Abstractions;
 using GridSystem.Domain.Extensions;
 using GridSystem.Domain.Grids.Columns;
 using GridSystem.Domain.Grids.Rows;
+using GridSystem.Domain.Grids.ValueObjects;
 
 namespace GridSystem.Domain.Grids;
 
@@ -77,13 +78,9 @@ public partial class Grid : SoftDeletableEntity, IAggregateRoot
         
         foreach (var row in Rows)
         {
-            string? selected = row.GetValue(columnId.ToString());
-            if (selected is null) continue;
-            
-            int selectedId = JsonDocument.Parse(selected).RootElement.GetProperty(nameof(SingleSelectValue.Id)).GetInt32();
-            if (selectedId != singleSelectValueId) continue;
-            
-            row.AddOrUpdate(columnId.ToString(), SingleSelectValue.CreateRowValue(singleSelectValueId, newValue));
+            if (row.GetValue(columnId.ToString()) is not SingleSelectColumnRecord record) continue;
+
+            record.Value = newValue;
         }
     }
 
@@ -95,11 +92,11 @@ public partial class Grid : SoftDeletableEntity, IAggregateRoot
 
         foreach (var row in Rows)
         {
-            string? selected = row.GetValue(columnId.ToString());
-            if (selected is null) continue;
-            
-            int selectedId = JsonDocument.Parse(selected).RootElement.GetProperty(nameof(SingleSelectValue.Id)).GetInt32();
-            if (selectedId != singleSelectValueId) continue;
+            if (row.GetValue(columnId.ToString()) is not SingleSelectColumnRecord record ||
+                record.Id != singleSelectValueId)
+            {
+                continue;
+            }
             
             row.Remove(columnId.ToString());
         }
@@ -137,7 +134,7 @@ public partial class Grid : SoftDeletableEntity, IAggregateRoot
             c => c.Id == columnId, 
             () => new ArgumentException($"Column with id {columnId} was not found"));
 
-        if (!column.ValidateValue(value))
+        if (!column.TryCreateColumnRecord(value, out ColumnRecord? record))
         {
             throw new Exception($"Value is not valid");
         }
@@ -146,7 +143,7 @@ public partial class Grid : SoftDeletableEntity, IAggregateRoot
             x => x.Id == rowId,
             () => new ArgumentException($"Row with id {columnId} was not found"));
         
-        row.AddOrUpdate(columnId.ToString(), value);
+        row.AddOrUpdate(columnId.ToString(), record);
         
     }
     

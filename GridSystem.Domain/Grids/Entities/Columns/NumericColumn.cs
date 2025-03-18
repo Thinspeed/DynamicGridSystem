@@ -22,9 +22,16 @@ public partial class NumericColumn : Column
 
     public override ColumnType Type => ColumnType.Numeric;
 
-    public override bool ValidateValue(string value)
+    public override bool TryCreateColumnRecord(string value, out ColumnRecord? record)
     {
-        return decimal.TryParse(value, out _);
+        if (!decimal.TryParse(value, out decimal decimalValue))
+        {
+            record = null!;
+            return false;
+        }
+
+        record = new NumericColumnRecord(decimalValue);
+        return true;
     }
 
     public void Update(string name, int position, int decimalPlaces = 0)

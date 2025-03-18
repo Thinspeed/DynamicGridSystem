@@ -16,11 +16,18 @@ public partial class SingleSelectColumn: Column
     
     public override ColumnType Type => ColumnType.SingleSelect;
 
-    public override bool ValidateValue(string value)
+    public override bool TryCreateColumnRecord(string value, out ColumnRecord? record)
     {
         SingleSelectValue? singleSelectValue = JsonSerializer.Deserialize<SingleSelectValue>(value);
-        return singleSelectValue is not null && 
-               Values.Any(x => x.Id == singleSelectValue.Id && x.Value == singleSelectValue.Value);
+        if (singleSelectValue is null ||
+            !Values.Any(x => x.Id == singleSelectValue.Id && x.Value == singleSelectValue.Value))
+        {
+            record = null;
+            return false;
+        }
+
+        record = singleSelectValue.ToSingleSelectColumnRecord();
+        return true;
     }
 
     public void Update(string name, int position)
