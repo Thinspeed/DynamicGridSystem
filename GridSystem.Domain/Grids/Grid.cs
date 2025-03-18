@@ -62,6 +62,49 @@ public partial class Grid : SoftDeletableEntity, IAggregateRoot
         column.Update(name, position);
     }
 
+    public SingleSelectValue AddSingleSelectValue(int columnId, string value)
+    {
+        SingleSelectColumn column = GetColumn<SingleSelectColumn>(columnId);
+
+        return column.AddValue(value);
+    }
+
+    public void UpdateSingleSelectValue(int columnId, int singleSelectValueId, string newValue)
+    {
+        SingleSelectColumn column = GetColumn<SingleSelectColumn>(columnId);
+
+        column.UpdateValue(singleSelectValueId, newValue);
+        
+        foreach (var row in Rows)
+        {
+            string? selected = row.GetValue(columnId.ToString());
+            if (selected is null) continue;
+            
+            int selectedId = JsonDocument.Parse(selected).RootElement.GetProperty(nameof(SingleSelectValue.Id)).GetInt32();
+            if (selectedId != singleSelectValueId) continue;
+            
+            row.AddOrUpdate(columnId.ToString(), SingleSelectValue.CreateRowValue(singleSelectValueId, newValue));
+        }
+    }
+
+    public void RemoveSingleSelectValue(int columnId, int singleSelectValueId)
+    {
+        SingleSelectColumn column = GetColumn<SingleSelectColumn>(columnId);
+        
+        column.RemoveValue(singleSelectValueId);
+
+        foreach (var row in Rows)
+        {
+            string? selected = row.GetValue(columnId.ToString());
+            if (selected is null) continue;
+            
+            int selectedId = JsonDocument.Parse(selected).RootElement.GetProperty(nameof(SingleSelectValue.Id)).GetInt32();
+            if (selectedId != singleSelectValueId) continue;
+            
+            row.Remove(columnId.ToString());
+        }
+    }
+
     public StringColumn AddStringColumn(string name, int position)
     {
         var column = new StringColumn(name, position, Id);

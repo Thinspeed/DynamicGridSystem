@@ -1,5 +1,6 @@
 using EntityFramework.Preferences;
 using GridSystem.Api.Requests;
+using GridSystem.Domain.Grids;
 using GridSystem.Domain.Grids.Columns;
 using JetBrains.Annotations;
 using MediatR;
@@ -8,11 +9,15 @@ using Microsoft.EntityFrameworkCore;
 
 namespace GridSystem.Api.Features.Grids;
 
-public class RemoveSingleSelectValueCommand : DeleteCommand<int, Unit>;
+public class RemoveSingleSelectValueCommand : DeleteCommand<int, Unit>
+{
+    [FromRoute] public int GridId { get; init; }
+    [FromRoute] public int ColumnId { get; init; }
+}
 
 public partial class GridController
 {
-    [HttpDelete("single-select/value/{Id}")]
+    [HttpDelete("{GridId}/single-select/{ColumnId}/value/{Id}")]
     public async Task<IActionResult> RemoveSingleSelectValue(RemoveSingleSelectValueCommand command)
     {
         return Ok(await Mediator.Send(command));
@@ -25,16 +30,20 @@ public class RemoveSingleSelectValueCommandHandler(ApplicationRwDbContext dbCont
 {
     public override async Task<Unit> Handle(RemoveSingleSelectValueCommand request, CancellationToken cancellationToken)
     {
-        SingleSelectValue? entity = await DbContext.Set<SingleSelectValue>()
-            .FirstOrDefaultAsync(x => x.Id == request.Id, cancellationToken);
+        Grid? grid = await DbContext.Set<Grid>()
+            .Include(x => x.Columns.AsQueryable().Where(c => c.Id == request.ColumnId))
+                .ThenInclude(x => (x as SingleSelectColumn)!.Values)
+            .Include(x => x.Rows.AsQueryable()
+                .Where(r => r.Data.RootElement.GetProperty(request.ColumnId.ToString()).GetProperty(nameof(SingleSelectValue.Id)).GetInt32() == request.Id))
+            .FirstOrDefaultAsync(x => x.Id == request.GridId, cancellationToken);
 
-        if (entity is null)
+        if (grid is null)
         {
-            throw new Exception($"Single-select value with id {request.Id} does not exist");
+            throw new Exception($"Grid with id {request.GridId} does not exist");
         }
-
-        DbContext.Set<SingleSelectValue>().Remove(entity);
         
+        grid.RemoveSingleSelectValue(request.ColumnId, request.Id);
+
         await DbContext.SaveChangesAsync(cancellationToken);
         
         return Unit.Value;

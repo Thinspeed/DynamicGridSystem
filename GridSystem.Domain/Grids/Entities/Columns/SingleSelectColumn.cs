@@ -1,5 +1,6 @@
 using System.Text.Json;
 using Generator.Attributes;
+using GridSystem.Domain.Extensions;
 using GridSystem.Domain.Grids.ValueObjects;
 
 namespace GridSystem.Domain.Grids.Columns;
@@ -26,5 +27,32 @@ public partial class SingleSelectColumn: Column
     {
         Name = name;
         Position = position;
+    }
+
+    public SingleSelectValue AddValue(string value)
+    {
+        SingleSelectValue singleSelectValue = new SingleSelectValue(value, Id);
+        
+        Values.Add(singleSelectValue);
+
+        return singleSelectValue;
+    }
+
+    public void UpdateValue(int singleSelectValueId, string newValue)
+    {
+        SingleSelectValue singleSelectValue = Values.FirstOrThrow(
+            x => x.Id == singleSelectValueId,
+            () => new ArgumentException($"Single-select value with id {singleSelectValueId} was not found"));
+        
+        singleSelectValue.Value = newValue;
+    }
+
+    public void RemoveValue(int singleSelectValueId)
+    {
+        SingleSelectValue singleSelectValue = Values.FirstOrThrow(
+            x => x.Id == singleSelectValueId,
+            () => new ArgumentException($"Single-select value with id {singleSelectValueId} was not found"));
+
+        Values.Remove(singleSelectValue);
     }
 }

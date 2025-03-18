@@ -33,11 +33,21 @@ public partial class Row : SoftDeletableEntity
         _data = new Dictionary<string, string>();
     }
     
+    public string? GetValue(string key)
+    {
+        return _data.GetValueOrDefault(key);
+    }
+    
     public void AddOrUpdate(string key, string value)
     {
         _data[key] = value;
     }
 
+    public void Remove(string key)
+    {
+        _data.Remove(key);
+    }
+    
     public JsonDocument Data
     {
         get => JsonSerializer.SerializeToDocument(_data);

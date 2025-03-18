@@ -1,5 +1,6 @@
 using EntityFramework.Preferences;
 using GridSystem.Api.Requests;
+using GridSystem.Domain.Grids;
 using GridSystem.Domain.Grids.Columns;
 using JetBrains.Annotations;
 using MediatR;
@@ -11,11 +12,15 @@ namespace GridSystem.Api.Features.Grids;
 [UsedImplicitly]
 public record UpdateSingleSelectValueCommandBody(string Value) : PutCommandBody;
 
-public class UpdateSingleSelectValueCommand : PutCommandWithId<int, UpdateSingleSelectValueCommandBody, Unit>;
+public class UpdateSingleSelectValueCommand : PutCommandWithId<int, UpdateSingleSelectValueCommandBody, Unit>
+{
+    [FromRoute] public int GridId { get; init; }
+    [FromRoute] public int ColumnId { get; init; }
+}
 
 public partial class GridController
 {
-    [HttpPost("single-select/value/{Id}")]
+    [HttpPut("{GridId}/single-select/{ColumnId}/value/{Id}")]
     public async Task<IActionResult> UpdateSingleSelectValue(UpdateSingleSelectValueCommand request)
     {
         return Ok(await Mediator.Send(request));
@@ -26,20 +31,24 @@ public partial class GridController
 public class UpdateSingleSelectValueCommandHandler(ApplicationRwDbContext dbContext)
     : BaseRequestHandler<UpdateSingleSelectValueCommand, Unit>(dbContext)
 {
-    //todo обновлять нужно через grid, чтобы сразу обновить все ряды в которых использовалось значение из single select
     public override async Task<Unit> Handle(UpdateSingleSelectValueCommand request, CancellationToken cancellationToken)
     {
         UpdateSingleSelectValueCommandBody body = request.Body;
+        
+        Grid? grid = await DbContext.Set<Grid>()
+            .Include(x => x.Columns.AsQueryable()
+                .Where(c => c.Id == request.ColumnId))
+                .ThenInclude(x => (x as SingleSelectColumn)!.Values)
+            .Include(x => x.Rows.AsQueryable()
+                .Where(r => r.Data.RootElement.GetProperty(request.ColumnId.ToString()).GetProperty(nameof(SingleSelectValue.Id)).GetInt32() == request.Id))
+            .FirstOrDefaultAsync(x => x.Id == request.GridId, cancellationToken);
 
-        SingleSelectValue? entity = await DbContext.Set<SingleSelectValue>()
-            .FirstOrDefaultAsync(x => x.Id == request.Id, cancellationToken);
-
-        if (entity is null)
+        if (grid is null)
         {
-            throw new Exception($"Single-select value with id {request.Id} does not exist");
+            throw new Exception($"Grid with id {request.GridId} does not exist");
         }
         
-        entity.Value = body.Value;
+        grid.UpdateSingleSelectValue(request.ColumnId, request.Id, body.Value);
 
         await DbContext.SaveChangesAsync(cancellationToken);
         
