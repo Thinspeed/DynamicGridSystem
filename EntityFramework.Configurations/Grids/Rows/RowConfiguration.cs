@@ -5,7 +5,7 @@ using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
 namespace EntityFramework.Configurations.Grids.Rows;
 
-public class RowConfiguration : EntityConfiguration<Row>
+public class RowConfiguration : SoftDeletableEntityConfiguration<Row>
 {
     public override void Configure(EntityTypeBuilder<Row> builder)
     {

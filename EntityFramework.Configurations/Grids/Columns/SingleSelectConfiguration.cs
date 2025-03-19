@@ -5,7 +5,7 @@ using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
 namespace EntityFramework.Configurations.Grids.Columns;
 
-public class SingleSelectConfiguration : EntityConfiguration<SingleSelectColumn>
+public class SingleSelectConfiguration : SoftDeletableEntityConfiguration<SingleSelectColumn>
 {
     public override void Configure(EntityTypeBuilder<SingleSelectColumn> builder)
     {

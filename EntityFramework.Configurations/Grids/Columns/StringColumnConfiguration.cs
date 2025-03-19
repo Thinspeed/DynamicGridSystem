@@ -4,7 +4,7 @@ using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
 namespace EntityFramework.Configurations.Grids.Columns;
 
-public class StringColumnConfiguration : EntityConfiguration<StringColumn>
+public class StringColumnConfiguration : SoftDeletableEntityConfiguration<StringColumn>
 {
     public override void Configure(EntityTypeBuilder<StringColumn> builder)
     {

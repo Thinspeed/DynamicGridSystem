@@ -5,4 +5,4 @@ using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
 namespace EntityFramework.Configurations.Grids;
 
-public class GridConfiguration : EntityConfiguration<Grid>;
+public class GridConfiguration : SoftDeletableEntityConfiguration<Grid>;
