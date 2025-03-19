@@ -22,7 +22,8 @@ public partial class GridController
 public class GetGridByIdQueryHandler(ApplicationRoDbContext dbContext)
     : BaseRequestHandler<GetGridByIdQuery, GetGridByIdQueryResponse>(dbContext)
 {
-    private static readonly Selector<Grid, GetGridByIdQueryResponse> Selector = GetGridByIdQueryResponse.Selector;
+    private static readonly Selector<Grid, GetGridByIdQueryResponse> Selector 
+        = GetGridByIdQueryResponse.Selector.Construct();
     
     public override async Task<GetGridByIdQueryResponse> Handle(GetGridByIdQuery request, CancellationToken cancellationToken)
     {
@@ -47,8 +48,7 @@ public class GetGridByIdQueryResponse
     
     public required string Name { get; init; }
     
-    public static readonly Selector<Grid, GetGridByIdQueryResponse> Selector = EfSelector.Declare<Grid, GetGridByIdQueryResponse>()
+    public static readonly EfSelector<Grid, GetGridByIdQueryResponse> Selector = EfSelector.Declare<Grid, GetGridByIdQueryResponse>()
             .Select(src => src.Id, dst => dst.Id)
-            .Select(src => src.Name, dst => dst.Name)
-            .Construct();
+            .Select(src => src.Name, dst => dst.Name);
 }

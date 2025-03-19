@@ -23,7 +23,8 @@ public partial class GridController
 public class GetRowByIdQueryHandler(ApplicationRoDbContext dbContext)
     : BaseRequestHandler<GetRowByIdQuery, GetRowByIdQueryResponse>(dbContext)
 {
-    private static readonly Selector<Row, GetRowByIdQueryResponse> Selector = GetRowByIdQueryResponse.Selector;
+    private static readonly Selector<Row, GetRowByIdQueryResponse> Selector 
+        = GetRowByIdQueryResponse.Selector.Construct();
     
     public override async Task<GetRowByIdQueryResponse> Handle(GetRowByIdQuery request, CancellationToken cancellationToken)
     {
@@ -48,9 +49,8 @@ public class GetRowByIdQueryResponse
     
     public string Data { get; set; }
     
-    public static readonly Selector<Row, GetRowByIdQueryResponse> Selector =
+    public static readonly EfSelector<Row, GetRowByIdQueryResponse> Selector =
         EfSelector.Declare<Row, GetRowByIdQueryResponse>()
             .Select(src => src.Id, dest => dest.Id)
-            .Select(src => src.DataAsString, dest => dest.Data)
-            .Construct();
+            .Select(src => src.DataAsString, dest => dest.Data);
 }

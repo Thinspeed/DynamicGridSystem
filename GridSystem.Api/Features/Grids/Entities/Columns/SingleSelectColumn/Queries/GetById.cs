@@ -25,7 +25,7 @@ public class GetSingleSelectColumnByIdQueryHandler(ApplicationRoDbContext dbCont
     : BaseRequestHandler<GetSingleSelectColumnByIdQuery, GetSingleSelectColumnByIdQueryResponse>(dbContext)
 {
     private static readonly Selector<SingleSelectColumn, GetSingleSelectColumnByIdQueryResponse> Selector =
-        GetSingleSelectColumnByIdQueryResponse.Selector;
+        GetSingleSelectColumnByIdQueryResponse.Selector.Construct();
     
     public override async Task<GetSingleSelectColumnByIdQueryResponse> Handle(GetSingleSelectColumnByIdQuery request, CancellationToken cancellationToken)
     {
@@ -58,17 +58,17 @@ public partial class GetSingleSelectColumnByIdQueryResponse
     
     public IEnumerable<SingleSelectValueModel> Values { get; init; }
     
-    public static readonly Selector<SingleSelectColumn, GetSingleSelectColumnByIdQueryResponse> Selector =
+    public static readonly EfSelector<SingleSelectColumn, GetSingleSelectColumnByIdQueryResponse> Selector =
         EfSelector.Declare<SingleSelectColumn, GetSingleSelectColumnByIdQueryResponse>()
             .Select(src => src.Id, dst => dst.Id)
             .Select(src => src.Name, dst => dst.Name)
             .Select(src => src.Position, dst => dst.Position)
-            .SelectCollection(src => src.Values, dst => dst.Values, SingleSelectValueModel.Selector)
-            .Construct();
+            .SelectCollection(src => src.Values, dst => dst.Values, SingleSelectValueModel.Selector);
 }
 
 public partial class GetSingleSelectColumnByIdQueryResponse
 {
+    [UsedImplicitly]
     public class SingleSelectValueModel
     {
         public int Id { get; init; }

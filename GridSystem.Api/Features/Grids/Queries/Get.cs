@@ -23,7 +23,8 @@ public partial class GridController
 public class GetGridQueryHandler(ApplicationRoDbContext dbContext, AppSieveProcessor sieveProcessor)
     : BaseRequestHandler<GetGridQuery, GetGridByIdQueryResponse, PagedList<GetGridByIdQueryResponse>>(dbContext, sieveProcessor)
 {
-    private static readonly Selector<Grid, GetGridByIdQueryResponse> Selector = GetGridByIdQueryResponse.Selector;
+    private static readonly Selector<Grid, GetGridByIdQueryResponse> Selector = 
+        GetGridByIdQueryResponse.Selector.Construct();
     
     public override async Task<PagedList<GetGridByIdQueryResponse>> Handle(GetGridQuery request, CancellationToken cancellationToken)
     {

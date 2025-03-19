@@ -23,7 +23,7 @@ public class GetNumericColumnByIdQueryHandler(ApplicationRoDbContext dbContext)
     : BaseRequestHandler<GetNumericColumnByIdQuery, GetNumericColumnByIdQueryResponse>(dbContext)
 {
     private static readonly Selector<NumericColumn, GetNumericColumnByIdQueryResponse> Selector =
-        GetNumericColumnByIdQueryResponse.Selector;
+        GetNumericColumnByIdQueryResponse.Selector.Construct();
     
     public override async Task<GetNumericColumnByIdQueryResponse> Handle(GetNumericColumnByIdQuery request, CancellationToken cancellationToken)
     {
@@ -53,11 +53,10 @@ public class GetNumericColumnByIdQueryResponse
     public int DecimalPlaces { get; init; }
     
     
-    public static readonly Selector<NumericColumn, GetNumericColumnByIdQueryResponse> Selector =
+    public static readonly EfSelector<NumericColumn, GetNumericColumnByIdQueryResponse> Selector =
         EfSelector.Declare<NumericColumn, GetNumericColumnByIdQueryResponse>()
             .Select(src => src.Id, dst => dst.Id)
             .Select(src => src.Name, dst => dst.Name)
             .Select(src => src.Position, dst => dst.Position)
-            .Select(src => src.DecimalPlaces, dst => dst.DecimalPlaces)
-            .Construct();
+            .Select(src => src.DecimalPlaces, dst => dst.DecimalPlaces);
 }

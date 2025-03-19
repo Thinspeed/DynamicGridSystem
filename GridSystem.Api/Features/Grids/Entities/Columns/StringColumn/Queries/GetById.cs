@@ -24,7 +24,7 @@ public class GetStringColumnByIdQueryHandler(ApplicationRoDbContext dbContext)
     : BaseRequestHandler<GetStringColumnByIdQuery, GetStringColumnByIdQueryResponse>(dbContext)
 {
     private static readonly Selector<StringColumn, GetStringColumnByIdQueryResponse> Selector = 
-        GetStringColumnByIdQueryResponse.Selector;
+        GetStringColumnByIdQueryResponse.Selector.Construct();
     
     public override async Task<GetStringColumnByIdQueryResponse> Handle(GetStringColumnByIdQuery request, CancellationToken cancellationToken)
     {
@@ -49,9 +49,8 @@ public class GetStringColumnByIdQueryResponse
     
     public required string Name { get; init; }
 
-    public static readonly Selector<StringColumn, GetStringColumnByIdQueryResponse> Selector =
+    public static readonly EfSelector<StringColumn, GetStringColumnByIdQueryResponse> Selector =
         EfSelector.Declare<StringColumn, GetStringColumnByIdQueryResponse>()
             .Select(src => src.Id, dst => dst.Id)
-            .Select(src => src.Name, dst => dst.Name)
-            .Construct();
+            .Select(src => src.Name, dst => dst.Name);
 }

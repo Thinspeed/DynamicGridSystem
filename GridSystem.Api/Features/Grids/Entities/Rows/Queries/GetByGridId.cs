@@ -27,7 +27,8 @@ public class GetRowsByGridIdQueryHandler(ApplicationRoDbContext dbContext, AppSi
     : BaseRequestHandler<GetRowsByGridIdQuery, GetRowByIdQueryResponse, PagedList<GetRowByIdQueryResponse>>(dbContext,
         sieveProcessor)
 {
-    private static readonly Selector<Row, GetRowByIdQueryResponse> Selector = GetRowByIdQueryResponse.Selector;
+    private static readonly Selector<Row, GetRowByIdQueryResponse> Selector 
+        = GetRowByIdQueryResponse.Selector.Construct();
     
     public override async Task<PagedList<GetRowByIdQueryResponse>> Handle(GetRowsByGridIdQuery request, CancellationToken cancellationToken)
     {

@@ -24,7 +24,7 @@ public class GetSingleSelectValueByIdQueryHandler(ApplicationRoDbContext dbConte
     : BaseRequestHandler<GetSingleSelectValueByIdQuery, GetSingleSelectValueByIdQueryResponse>(dbContext)
 {
     private static readonly Selector<SingleSelectValue, GetSingleSelectValueByIdQueryResponse> Selector =
-        GetSingleSelectValueByIdQueryResponse.Selector;
+        GetSingleSelectValueByIdQueryResponse.Selector.Construct();
     
     public override async Task<GetSingleSelectValueByIdQueryResponse> Handle(GetSingleSelectValueByIdQuery request, CancellationToken cancellationToken)
     {
@@ -48,9 +48,8 @@ public class GetSingleSelectValueByIdQueryResponse
         
     public required string Value { get; init; }
         
-    public static readonly Selector<SingleSelectValue, GetSingleSelectValueByIdQueryResponse> Selector = 
+    public static readonly EfSelector<SingleSelectValue, GetSingleSelectValueByIdQueryResponse> Selector = 
         EfSelector.Declare<SingleSelectValue, GetSingleSelectValueByIdQueryResponse>()
             .Select(src => src.Id, dst => dst.Id)
-            .Select(src => src.Value, dst => dst.Value)
-            .Construct();
+            .Select(src => src.Value, dst => dst.Value);
 }
