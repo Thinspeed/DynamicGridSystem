@@ -84,6 +84,35 @@ public class EfSelector<TSource, TDestination>
         
         return this;
     }
+
+    public EfSelector<TSource, TDestination> SelectCollection<TSourceValue, TDestinationValue>(
+        Expression<Func<TSource, IEnumerable<TSourceValue>>> srcExpression,
+        Expression<Func<TDestination, IEnumerable<TDestinationValue>>> dstExpression,
+        EfSelector<TSourceValue, TDestinationValue> selector)
+    {
+        MemberExpression srcProperty = srcExpression.Body as MemberExpression 
+                                       ?? throw new InvalidCastException($"{nameof(dstExpression)} body is not a MemberExpression");
+        
+        MemberExpression dstProperty = dstExpression.Body as MemberExpression 
+                                       ?? throw new InvalidCastException($"{nameof(dstExpression)} body is not a MemberExpression");
+
+        Expression selectorExpression = selector.Construct().Expression;
+        
+        MethodCallExpression selectCall = Expression.Call(
+            typeof(Enumerable), 
+            nameof(Enumerable.Select), 
+            new Type[] { typeof(TSourceValue), typeof(TDestinationValue) },
+            Expression.MakeMemberAccess(_memberExpression, srcProperty.Member),
+            selectorExpression);
+        
+        MemberAssignment assignment = Expression.Bind(
+            dstProperty.Member,
+            selectCall);
+        
+        _assignmentExpressions.Add(assignment);
+
+        return this;
+    }
     
     public Selector<TSource, TDestination> Construct()
     {

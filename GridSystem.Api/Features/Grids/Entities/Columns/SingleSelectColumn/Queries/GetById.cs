@@ -29,6 +29,10 @@ public class GetSingleSelectColumnByIdQueryHandler(ApplicationRoDbContext dbCont
     
     public override async Task<GetSingleSelectColumnByIdQueryResponse> Handle(GetSingleSelectColumnByIdQuery request, CancellationToken cancellationToken)
     {
+        var list = DbContext.Set<SingleSelectColumn>()
+            .Where(c => c.Id == request.Id)
+            .Select(x => x.Values);
+        
         GetSingleSelectColumnByIdQueryResponse? response = await DbContext.Set<SingleSelectColumn>()
             .Where(x => x.Id == request.Id)
             .Select(Selector.Expression)
@@ -52,14 +56,28 @@ public partial class GetSingleSelectColumnByIdQueryResponse
     
     public int Position { get; init; }
     
-    //public List<SingleSelectValueModel> Values { get; init; }
+    public IEnumerable<SingleSelectValueModel> Values { get; init; }
     
     public static readonly Selector<SingleSelectColumn, GetSingleSelectColumnByIdQueryResponse> Selector =
         EfSelector.Declare<SingleSelectColumn, GetSingleSelectColumnByIdQueryResponse>()
             .Select(src => src.Id, dst => dst.Id)
             .Select(src => src.Name, dst => dst.Name)
             .Select(src => src.Position, dst => dst.Position)
-            //todo сделать маппинг коллекции(нужно доработать EFSelector)
-            //.Select(src => src.Values.Select<SingleSelectValue, SingleSelectValueModel>(SingleSelectValueModel.Selector.Expression), dst => dst.Values)
+            .SelectCollection(src => src.Values, dst => dst.Values, SingleSelectValueModel.Selector)
             .Construct();
 }
+
+public partial class GetSingleSelectColumnByIdQueryResponse
+{
+    public class SingleSelectValueModel
+    {
+        public int Id { get; init; }
+        
+        public required string Value { get; init; }
+        
+        public static readonly EfSelector<SingleSelectValue, SingleSelectValueModel> Selector =
+            EfSelector.Declare<SingleSelectValue, SingleSelectValueModel>()
+                .Select(src => src.Id, dst => dst.Id)
+                .Select(src => src.Value, dst => dst.Value);
+    }
+} 
