@@ -32,8 +32,6 @@ public partial class GridController
 public class CreateSingleSelectColumnCommandHandler(ApplicationRwDbContext dbContext)
     : BaseRequestHandler<CreateSingleSelectColumnCommand, int>(dbContext)
 {
-    //todo при такой логике даже не удаленные значения будут удалятся
-    //todo переделать!!!
     public override async Task<int> Handle(CreateSingleSelectColumnCommand request, CancellationToken cancellationToken)
     {
         CreateSingleSelectColumnCommandBody body = request.Body;
