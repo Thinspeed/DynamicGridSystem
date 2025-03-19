@@ -2,6 +2,7 @@ using System.Text.Json;
 using System.Text.Json.Nodes;
 using Generator.Attributes;
 using GridSystem.Domain.Abstractions;
+using GridSystem.Domain.Extensions;
 using GridSystem.Domain.Grids.ValueObjects;
 
 namespace GridSystem.Domain.Grids.Rows;
@@ -52,7 +53,7 @@ public partial class Row : SoftDeletableEntity
     public JsonDocument Data
     {
         get => JsonSerializer.SerializeToDocument(_data);
-        init => _data = value.Deserialize<Dictionary<string, ColumnRecord>>()
+        init => _data = value.Deserialize<JsonNode>().MoveMetadataToBeginning().Deserialize<Dictionary<string, ColumnRecord>>()
                         ?? throw new Exception("Row data deserialization failed");
     }
     

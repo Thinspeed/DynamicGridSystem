@@ -1,3 +1,4 @@
+using System.Globalization;
 using Generator.Attributes;
 using GridSystem.Domain.Grids.ValueObjects;
 
@@ -24,7 +25,7 @@ public partial class NumericColumn : Column
 
     public override bool TryCreateColumnRecord(string value, out ColumnRecord? record)
     {
-        if (!decimal.TryParse(value, out decimal decimalValue))
+        if (!decimal.TryParse(value, CultureInfo.InvariantCulture, out decimal decimalValue))
         {
             record = null!;
             return false;

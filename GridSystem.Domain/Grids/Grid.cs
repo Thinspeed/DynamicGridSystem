@@ -143,7 +143,7 @@ public partial class Grid : SoftDeletableEntity, IAggregateRoot
             x => x.Id == rowId,
             () => new ArgumentException($"Row with id {columnId} was not found"));
         
-        row.AddOrUpdate(columnId.ToString(), record);
+        row.AddOrUpdate(columnId.ToString(), record!);
         
     }
     
