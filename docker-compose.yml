@@ -1,0 +1,9 @@
+﻿services:
+  gridsystem.api:
+    image: gridsystem.api
+    ports:
+      - 8080:8080
+      - 8081:8081
+    build:
+      context: .
+      dockerfile: GridSystem.Api/Dockerfile

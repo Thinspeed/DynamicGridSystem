@@ -13,11 +13,11 @@ var app = builder.Build();
 
 app.InitAppDefinitions();
 
-if (app.Environment.IsDevelopment())
-{
+//if (app.Environment.IsDevelopment())
+//{
     app.UseSwagger();
     app.UseSwaggerUI();
-}
+//}
 
 app.UseRouting();
 app.MapControllers();
