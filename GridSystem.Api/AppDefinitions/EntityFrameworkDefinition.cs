@@ -32,9 +32,9 @@ public class EntityFrameworkDefinition : IAppDefinition
             .UseNpgsql(migrationConnectionString));
     }
     
-    public void Init(IServiceProvider serviceProvider)
+    public void Init(IHost app)
     {
-        IServiceScope scope = serviceProvider.CreateScope();
+        IServiceScope scope = app.Services.CreateScope();
         ILogger<Program>? logger = scope.ServiceProvider.GetService<ILogger<Program>>();
         
         using var dbContext = scope.ServiceProvider.GetRequiredService<MigrationDbContext>();

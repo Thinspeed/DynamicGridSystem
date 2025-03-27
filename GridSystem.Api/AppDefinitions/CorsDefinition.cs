@@ -18,4 +18,14 @@ public class CorsDefinition : IAppDefinition
                 .AllowAnyMethod();
         }));
     }
+
+    public void Init(IHost app)
+    {
+        if (app is not IApplicationBuilder appBuilder)
+        {
+            throw new Exception("App definitions must implement IApplicationBuilder interface to add Cors middleware.");
+        }
+        
+        appBuilder.UseCors(CorsPolicyName);
+    }
 }

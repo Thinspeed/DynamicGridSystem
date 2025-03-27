@@ -1,5 +1,4 @@
 using AppDefinition.Extensions;
-using GridSystem.Api.AppDefinitions;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -20,7 +19,6 @@ if (app.Environment.IsDevelopment())
     app.UseSwaggerUI();
 }
 
-app.UseCors(CorsDefinition.CorsPolicyName);
 app.UseRouting();
 app.MapControllers();
 app.Run();

@@ -12,10 +12,9 @@ public static class HostExtensions
                                           ?? throw new InvalidOperationException("App definition provider not found");
 
         IEnumerable<IAppDefinition> appDefinitions = provider.GetAppDefinitions();
-        app.Services.CreateScope();
         foreach (var definition in appDefinitions)
         {
-            definition.Init(app.Services);
+            definition.Init(app);
         }
     }
 }
