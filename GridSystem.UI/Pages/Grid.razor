@@ -1,0 +1,45 @@
+@page "/grid"
+
+@using GridSystem.UI.Models.Common
+
+@inject HttpClient Http
+
+<PageTitle>Grids</PageTitle>
+
+<h3>Grids</h3>
+
+@if (_grids == null)
+{
+    <p>
+        <em>Loading...</em>
+    </p>
+}
+else
+{
+    <table class="table">
+        <thead>
+        <tr>
+            <th>Номер</th>
+            <th>Название</th>
+        </tr>
+        </thead>
+        <tbody>
+        @foreach (var grid in _grids.Data)
+        {
+            <tr>
+                <td>@grid.Id</td>
+                <td>@grid.Name</td>
+            </tr>
+        }
+        </tbody>
+    </table>
+}
+
+@code {
+    private PagedList<Models.Grids.Grid>? _grids;
+    protected override async Task OnInitializedAsync()
+    {
+        _grids = await Http.GetFromJsonAsync<PagedList<Models.Grids.Grid>>("/api/grid?SieveModel.Page=1&SieveModel.PageSize=20");
+    }
+
+}
