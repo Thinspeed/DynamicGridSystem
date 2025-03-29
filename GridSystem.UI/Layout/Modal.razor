@@ -1,0 +1,44 @@
+<div class="modal-backdrop" style="@(IsVisible ? "display: block;" : "display: none;")">
+    <div class="modal-wrapper">
+        <div class="modal-header">
+            <h3>@Title</h3>
+            <button class="close-button" @onclick="Close">×</button>
+        </div>
+        <div class="modal-body">
+            @ChildContent
+        </div>
+        <div class="modal-footer">
+            <button class="modal-button" @onclick="Close">Закрыть</button>
+            <button class="create-button" @onclick="Create">Создать</button>
+        </div>
+    </div>
+</div>
+
+@code {
+    [Parameter] public string Title { get; set; } = "Модальное окно";
+    [Parameter] public RenderFragment? ChildContent { get; set; }
+    [Parameter] public EventCallback OnClose { get; set; }
+    [Parameter] public EventCallback OnCreate { get; set; }
+
+    private bool IsVisible { get; set; }
+
+    public void Show()
+    {
+        IsVisible = true;
+        StateHasChanged();
+    }
+
+    private void Close()
+    {
+        IsVisible = false;
+        OnClose.InvokeAsync();
+    }
+
+    private async void Create()
+    {
+        //todo тут нужна кажется валидация
+        IsVisible = false;
+        StateHasChanged();
+        await OnCreate.InvokeAsync();
+    }
+}
