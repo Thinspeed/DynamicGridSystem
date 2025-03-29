@@ -1,0 +1,86 @@
+.content-wrapper {
+    display: flex;
+    flex-direction: column;
+}
+
+.create-button {
+    display: inline-flex;
+    background-color: #222ec7;
+    margin-left: auto;
+    border: none;
+    border-radius: 10px;
+    width: 120px;
+    padding: 5px 10px;
+}
+
+.create-button i {
+    color: white;
+}
+
+.create-button-icon {
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' fill='white' class='bi bi-plus' viewBox='0 0 16 16'%3E%3Cpath d='M8 4a.5.5 0 0 1 .5.5v3h3a.5.5 0 0 1 0 1h-3v3a.5.5 0 0 1-1 0v-3h-3a.5.5 0 0 1 0-1h3v-3A.5.5 0 0 1 8 4'/%3E%3C/svg%3E");
+    width: 16px;
+    height: 16px;
+    margin: auto 0 auto auto;
+}
+
+.table-wrapper {
+    display: flex;
+    flex-direction: column;
+    box-shadow: 2px 2px 10px rgba(0, 0, 0, 0.15);
+    border-radius: 10px;
+    min-height: 80vh;
+    margin: 20px;
+}
+
+.options-wrapper {
+    margin-top: auto;
+    display: flex;
+}
+
+.page-selector {
+    display: flex;
+    max-width: 200px;
+}
+
+.prev-page-button {
+    display: inline-flex;
+    background: none;
+    border: none;
+    margin: auto 0;
+    padding: 0;
+}
+
+.prev-page-button-icon {
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' fill='black' class='bi bi-chevron-left' viewBox='0 0 16 16'%3E%3Cpath fill-rule='evenodd' d='M11.354 1.646a.5.5 0 0 1 0 .708L5.707 8l5.647 5.646a.5.5 0 0 1-.708.708l-6-6a.5.5 0 0 1 0-.708l6-6a.5.5 0 0 1 .708 0'/%3E%3C/svg%3E");
+    width: 16px;
+    height: 16px;
+}
+
+.current-page-number {
+    margin: auto 10px;
+}
+
+.next-page-button{
+    display: inline-flex;
+    background: none;
+    border: none;
+    margin: auto 0;
+    padding: 0;
+}
+
+.next-page-button-icon {
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' fill='black' class='bi bi-chevron-right' viewBox='0 0 16 16'%3E%3Cpath fill-rule='evenodd' d='M4.646 1.646a.5.5 0 0 1 .708 0l6 6a.5.5 0 0 1 0 .708l-6 6a.5.5 0 0 1-.708-.708L10.293 8 4.646 2.354a.5.5 0 0 1 0-.708'/%3E%3C/svg%3E");
+    width: 16px;
+    height: 16px;
+}
+
+.page-size-selector {
+    width: 50px;
+    margin-left: auto;
+    border: none;
+}
+
+.page-size-selector:focus{
+    outline: none;
+}

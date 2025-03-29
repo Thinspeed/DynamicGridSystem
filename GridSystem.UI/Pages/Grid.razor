@@ -1,12 +1,14 @@
 @page "/grid"
 
 @using GridSystem.UI.Models.Common
+@using GridSystem.UI.Services
 
 @inject HttpClient Http
+@inject GridService GridService
 
-<PageTitle>Grids</PageTitle>
+<PageTitle>Таблицы</PageTitle>
 
-<h3>Grids</h3>
+<h3>Таблицы</h3>
 
 @if (_grids == null)
 {
@@ -16,30 +18,110 @@
 }
 else
 {
-    <table class="table">
-        <thead>
-        <tr>
-            <th>Номер</th>
-            <th>Название</th>
-        </tr>
-        </thead>
-        <tbody>
-        @foreach (var grid in _grids.Data)
-        {
-            <tr>
-                <td>@grid.Id</td>
-                <td>@grid.Name</td>
-            </tr>
-        }
-        </tbody>
-    </table>
+    <div class="content-wrapper">
+        <button class="create-button" @onclick="ShowModal">
+            <i>Создать</i>
+            <span class="create-button-icon"></span>
+        </button>
+        <div class="table-wrapper">
+            <table class="table">
+                <thead>
+                <tr>
+                    <th>Номер</th>
+                    <th>Название</th>
+                </tr>
+                </thead>
+                <tbody>
+                @foreach (var grid in _grids.Data)
+                {
+                <tr>
+                    <td>@grid.Id</td>
+                    <td>@grid.Name</td>
+                </tr>
+                }
+                </tbody>
+            </table>
+            <div class="options-wrapper">
+                <div class="page-selector">
+                    <button class="prev-page-button" @onclick="PreviousPage" disabled=@(_currentPage == 1)>
+                        <span class="prev-page-button-icon"></span>
+                    </button>
+                    <span class="current-page-number">@_currentPage</span>
+                    <button class="next-page-button" @onclick="NextPage" disabled="@(_currentPage == _grids.TotalPages)">
+                        <span class="next-page-button-icon"></span>
+                    </button>
+                </div>
+                <select value="@_pageSize" @onchange="OnPageSizeChanged" class="page-size-selector">
+                    <option value="10">10</option>
+                    <option value="20">20</option>
+                    <option value="50">50</option>
+                </select>
+            </div>
+        </div>
+    </div>
+    
+    <Modal @ref="modalRef" Title="Создание таблицы" OnCreate="CreateGrid">
+        <InputText @bind-Value="_inputValue" class="input-field" placeholder="Введите имя..." />
+    </Modal>
 }
 
 @code {
     private PagedList<Models.Grids.Grid>? _grids;
-    protected override async Task OnInitializedAsync()
+    
+    private int _currentPage = 1;
+    private int _pageSize = 10;
+    
+    private string _inputValue = "";
+    private Modal? modalRef;
+    
+    private void ShowModal()
     {
-        _grids = await Http.GetFromJsonAsync<PagedList<Models.Grids.Grid>>("/api/grid?SieveModel.Page=1&SieveModel.PageSize=20");
+        modalRef?.Show();
+    }
+    
+    
+    private async Task OnPageSizeChanged(ChangeEventArgs e)
+    {
+        _grids = null;
+        _currentPage = 1;
+        _pageSize = Convert.ToInt32(e.Value);
+    
+        await LoadGridsDataAsync();
+    }
+    
+    private async Task PreviousPage()
+    {
+        if (_currentPage > 1)
+        {
+            _currentPage--;
+            await LoadGridsDataAsync();
+        }
     }
 
+    private async Task NextPage()
+    {
+        if (_currentPage < _grids?.TotalPages)
+        {
+            _currentPage++;
+            await LoadGridsDataAsync();
+        }
+    }
+    
+    private async Task LoadGridsDataAsync()
+    {
+        _grids = await GridService.GetPageAsync(_currentPage, _pageSize);
+    }
+
+    private async Task CreateGrid()
+    {
+        //todo нужно придумать как выдавать всплывающее окно с ошибкой
+        await GridService.CreateAsync(_inputValue);
+        
+        await LoadGridsDataAsync();
+    }
+    
+    protected override async Task OnInitializedAsync()
+    {
+        await LoadGridsDataAsync();
+    }
 }
